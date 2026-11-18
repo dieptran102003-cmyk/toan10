@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ôn tập Toán 10 – Cuối học kì I</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;800&family=Noto+Sans+Math&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#f5f8fd;--grid:#dde5f3;--card:#fff;--ink:#14213d;--mute:#4b5873;--line:#c9d4ea;--blue:#2447c9;--blue-t:#e6ecff;--ok:#0b7a6b;--ok-t:#dcf5ef;--bad:#c4262e;--bad-t:#fde7e8;--mid:#8a5a00;--mid-t:#fff1cc;--mark:#ffc93c;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1730;--grid:#18234a;--card:#17213f;--ink:#eaf0ff;--mute:#a9b6d6;--line:#33426f;--blue:#8fa8ff;--blue-t:#223067;--ok:#5fe0c8;--ok-t:#10372f;--bad:#ff8d92;--bad-t:#44191d;--mid:#ffd36b;--mid-t:#3d3010;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f1730;--grid:#18234a;--card:#17213f;--ink:#eaf0ff;--mute:#a9b6d6;--line:#33426f;--blue:#8fa8ff;--blue-t:#223067;--ok:#5fe0c8;--ok-t:#10372f;--bad:#ff8d92;--bad-t:#44191d;--mid:#ffd36b;--mid-t:#3d3010;color-scheme:dark}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;font:400 1rem/1.6 "Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--ink);background-color:var(--bg);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:28px 28px}
+main{max-width:760px;margin:0 auto;padding:16px 16px 56px}
+math{font-size:1.15em;font-family:"Noto Sans Math","STIX Two Math","Cambria Math","Latin Modern Math","Segoe UI Symbol","Apple Symbols",serif}
+h1,h2,h3{line-height:1.25;margin:0}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin:8px 0 18px}
+h1{font-weight:800;font-size:clamp(1.5rem,5.5vw,2.1rem)}
+h1 span{background:linear-gradient(transparent 58%,var(--mark) 58%);padding:0 4px}
+.sub{color:var(--mute);margin:6px 0 0}
+.fs{display:flex;gap:6px;flex-shrink:0}
+button,.btn{font:inherit;cursor:pointer}
+.fs button{min-width:44px;min-height:44px;border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;font-weight:600}
+.panel{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:18px;margin-bottom:18px}
+.panel h2{font-size:1.2rem;margin-bottom:12px}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+/* sơ đồ tư duy */
+.root{display:inline-block;background:var(--blue);color:#fff;font-weight:800;padding:10px 16px;border-radius:14px;margin-bottom:10px}
+:root[data-theme="dark"] .root{color:#0f1730}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .root{color:#0f1730}}
+.tree{margin-left:14px;border-left:3px solid var(--blue);padding-left:14px}
+.tree details{margin:8px 0}
+.tree summary{cursor:pointer;font-weight:600;background:var(--blue-t);border-radius:10px;padding:9px 12px;min-height:44px;list-style-position:inside}
+.tree ul{margin:8px 0 4px;padding-left:22px}
+.tree li{margin:4px 0}
+/* chọn */
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{position:relative}
+.chip input{position:absolute;opacity:0;inset:0;width:100%;height:100%;margin:0;cursor:pointer}
+.chip span{display:block;border:2px solid var(--line);border-radius:12px;padding:10px 14px;min-height:44px;background:var(--card)}
+.chip input:checked+span{border-color:var(--blue);background:var(--blue-t);font-weight:600}
+.chip input:focus-visible+span{outline:3px solid var(--blue);outline-offset:2px}
+.chip input:disabled+span{opacity:.55;border-style:dashed}
+.lab{font-weight:600;margin:16px 0 8px;display:block}
+input[type=range]{width:100%;accent-color:var(--blue);min-height:32px}
+.note{color:var(--mute);font-size:.92rem;margin:6px 0 0}
+.go{display:block;width:100%;margin-top:18px;min-height:52px;border:0;border-radius:14px;background:var(--blue);color:#fff;font-weight:800;font-size:1.05rem}
+:root[data-theme="dark"] .go{color:#0f1730}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .go{color:#0f1730}}
+.go.ghost{background:var(--card);color:var(--ink);border:2px solid var(--line)}
+.err{color:var(--bad);font-weight:600;margin:10px 0 0}
+/* làm bài */
+.bar{height:10px;background:var(--line);border-radius:6px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--blue);width:0;transition:width .2s}
+.meta{display:flex;justify-content:space-between;color:var(--mute);font-size:.92rem;margin:8px 0 12px}
+.tag{display:inline-block;font-size:.85rem;font-weight:600;border-radius:8px;padding:2px 10px;background:var(--mid-t);color:var(--mid);margin-right:6px}
+.q{font-size:1.1rem;font-weight:600;margin:10px 0 14px}
+.opt{display:flex;gap:10px;align-items:flex-start;border:2px solid var(--line);border-radius:12px;padding:10px 12px;margin:8px 0;min-height:48px;cursor:pointer;background:var(--card)}
+.opt:has(input:checked){border-color:var(--blue);background:var(--blue-t)}
+.opt:has(input:focus-visible){outline:3px solid var(--blue);outline-offset:2px}
+.opt input{margin-top:5px;width:18px;height:18px;accent-color:var(--blue);flex-shrink:0}
+.tfi{border:2px solid var(--line);border-radius:12px;padding:10px 12px;margin:8px 0}
+.tfi .row{display:flex;gap:10px;margin-top:8px}
+.tfi .opt{margin:0;flex:1;justify-content:center;align-items:center}
+.sa{width:100%;font:inherit;font-size:1.1rem;padding:12px;border:2px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink)}
+.nav{display:flex;gap:10px;margin-top:18px}
+.nav .go{margin:0;flex:1}
+/* kết quả */
+.score{text-align:center}
+.score b{display:block;font-size:3rem;font-weight:800;line-height:1.1}
+.rv{border:2px solid var(--line);border-left-width:8px;border-radius:14px;padding:14px;margin:12px 0;background:var(--card)}
+.rv.ok{border-left-color:var(--ok)}.rv.bad{border-left-color:var(--bad)}.rv.mid{border-left-color:var(--mid)}
+.st{font-weight:800}.ok .st{color:var(--ok)}.bad .st{color:var(--bad)}.mid .st{color:var(--mid)}
+.ans{background:var(--bg);border-radius:10px;padding:8px 12px;margin:8px 0}
+.exp{border-top:1px dashed var(--line);padding-top:8px;margin-top:8px}
+.tabs{display:flex;gap:8px;margin:0 0 16px;flex-wrap:wrap}
+.tabs button{flex:1;min-width:110px;min-height:44px;border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:12px;font-weight:600}
+.tabs button[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:var(--bg)}
+.demo{background:var(--mid-t);color:var(--mid);border-radius:12px;padding:10px 14px;margin:0 0 14px;font-size:.92rem}
+table{width:100%;border-collapse:collapse;margin-top:12px}th,td{text-align:left;padding:8px;border-bottom:1px solid var(--line)}
+[hidden]{display:none!important}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main>
+<div class="top">
+  <div>
+    <h1>Ôn tập <span>Toán 10</span></h1>
+    <p class="sub">Cuối học kì I · Kết nối tri thức</p>
+  </div>
+  <div class="fs" role="group" aria-label="Cỡ chữ">
+    <button type="button" id="fm" aria-label="Giảm cỡ chữ">A−</button>
+    <button type="button" id="fp" aria-label="Tăng cỡ chữ">A+</button>
+  </div>
+</div>
+
+<nav class="tabs" id="nav" aria-label="Chế độ sử dụng"><button type="button" data-v="home" aria-pressed="true">Tự luyện</button><button type="button" data-v="join" aria-pressed="false">Làm bài kiểm tra</button><button type="button" data-v="teach" aria-pressed="false">Giáo viên</button></nav>
+
+<section id="home">
+  <div class="panel">
+    <h2>Sơ đồ tư duy</h2>
+    <div class="chips" role="group" aria-label="Chọn chương để xem sơ đồ" id="mt"></div>
+    <div class="root" id="root" style="margin-top:12px"></div>
+    <div class="tree" id="map"></div>
+  </div>
+  <div class="panel">
+    <h2>Chọn nội dung luyện tập</h2>
+    <span class="lab" style="margin-top:0" id="lc">Chương</span>
+    <div class="chips" role="group" aria-labelledby="lc" id="chs"></div>
+    <span class="lab" id="ll">Mức độ</span>
+    <div class="chips" role="group" aria-labelledby="ll" id="lvs"></div>
+    <label class="lab" for="n">Số câu: <span id="nv">10</span></label>
+    <input type="range" id="n" min="5" max="20" value="10">
+    <p class="note" id="pool"></p>
+    <p class="err" id="err" role="alert" hidden></p>
+    <button class="go" type="button" id="start">Bắt đầu làm bài</button>
+  </div>
+  <p class="note">Đang xây dựng: đủ 5 chương, mỗi chương 10 câu mẫu; sẽ bổ sung thêm câu hỏi sau khi giáo viên duyệt.</p>
+</section>
+
+<section id="quiz" hidden>
+  <div class="panel">
+    <div class="bar" aria-hidden="true"><i id="pb"></i></div>
+    <div class="meta"><span id="pn" aria-live="polite"></span><span id="tm" aria-live="off"></span><span id="un"></span></div>
+    <h2 id="qh" tabindex="-1" style="font-size:1rem;font-weight:400"></h2>
+    <div id="qbox"></div>
+    <div class="nav">
+      <button class="go ghost" type="button" id="prev">Câu trước</button>
+      <button class="go" type="button" id="next">Câu sau</button>
+    </div>
+  </div>
+</section>
+
+<section id="res" hidden>
+  <div class="panel score">
+    <h2 id="rh" tabindex="-1">Kết quả</h2>
+    <b id="sc"></b>
+    <p id="ss" class="sub"></p>
+    <button class="go" type="button" id="again">Làm lại với cùng lựa chọn</button>
+    <button class="go ghost" type="button" id="home2">Chọn lại nội dung</button>
+  </div>
+  <div id="rvs"></div>
+</section>
+<section id="join" hidden>
+  <div class="panel">
+    <h2>Làm bài kiểm tra</h2>
+    <p class="demo" id="demo1" hidden>Chế độ thử nghiệm: chưa nối với Google Sheets, dữ liệu chỉ lưu trong trình duyệt này.</p>
+    <label class="lab" for="jn" style="margin-top:0">Họ và tên</label>
+    <input class="sa" id="jn" maxlength="40" autocomplete="off">
+    <label class="lab" for="jr">Mã phòng (do giáo viên cung cấp)</label>
+    <input class="sa" id="jr" maxlength="20" autocomplete="off">
+    <p class="note">Chỉ nhập họ tên, không nhập thông tin cá nhân khác. Giáo viên sẽ nhìn thấy điểm của bạn.</p>
+    <p class="err" id="je" role="alert" hidden></p>
+    <button class="go" type="button" id="jgo">Vào phòng</button>
+  </div>
+</section>
+
+<section id="wait" hidden>
+  <div class="panel score">
+    <h2 id="wh" tabindex="-1">Đã nộp bài</h2>
+    <p id="wm" class="sub" aria-live="polite"></p>
+    <button class="go" type="button" id="retry" hidden>Thử nộp lại</button>
+  </div>
+</section>
+
+<section id="teach" hidden>
+  <div class="panel">
+    <h2>Giáo viên: tạo phòng kiểm tra</h2>
+    <p class="demo" id="demo2" hidden>Chế độ thử nghiệm: chưa nối với Google Sheets, dữ liệu chỉ lưu trong trình duyệt này.</p>
+    <label class="lab" for="tr" style="margin-top:0">Mã phòng (ví dụ 10A3-HK1)</label>
+    <input class="sa" id="tr" maxlength="20" autocomplete="off">
+    <label class="lab" for="tp">Mã PIN giáo viên (ít nhất 4 ký tự, chỉ mình bạn biết)</label>
+    <input class="sa" id="tp" type="password" maxlength="20" autocomplete="off">
+    <span class="lab" id="tcl">Chương</span><div class="chips" role="group" aria-labelledby="tcl" id="tch"></div>
+    <span class="lab" id="tll">Mức độ</span><div class="chips" role="group" aria-labelledby="tll" id="tlv"></div>
+    <label class="lab" for="tn">Số câu (5 đến 20)</label>
+    <input class="sa" id="tn" type="number" min="5" max="20" value="10">
+    <label class="lab" for="tmin">Thời gian làm bài (phút, 0 là không giới hạn)</label>
+    <input class="sa" id="tmin" type="number" min="0" max="120" value="15">
+    <p class="err" id="te" role="alert" hidden></p>
+    <button class="go" type="button" id="tcreate">Tạo phòng (hoặc đặt lại phòng)</button>
+  </div>
+  <div class="panel">
+    <h2>Theo dõi và công bố</h2>
+    <p class="note" id="tst">Nhập mã phòng và PIN ở trên, rồi bấm “Xem kết quả”.</p>
+    <button class="go ghost" type="button" id="tlist">Xem kết quả (tự cập nhật 10 giây một lần)</button>
+    <div style="overflow-x:auto"><table id="tt" hidden><thead><tr><th>Hạng</th><th>Họ và tên</th><th>Điểm</th><th>Giờ nộp</th></tr></thead><tbody id="tb"></tbody></table></div>
+    <button class="go" type="button" id="tclose">Kết thúc bài kiểm tra</button>
+    <p class="note">Sau khi kết thúc, học sinh xem được điểm và lời giải của riêng mình, và phòng không nhận thêm bài.</p>
+    <button class="go ghost" type="button" id="tdel">Xóa phòng và kết quả</button>
+  </div>
+</section>
+</main>
+
+<script>
+var R=String.raw;
+var CH=[{id:1,name:"Chương I",full:"Mệnh đề và tập hợp",on:true},{id:2,name:"Chương II",full:"Bất phương trình và hệ bất phương trình bậc nhất hai ẩn",on:true},{id:3,name:"Chương III",full:"Hệ thức lượng trong tam giác",on:true},{id:4,name:"Chương IV",full:"Vectơ",on:true},{id:5,name:"Chương V",full:"Các số đặc trưng của mẫu số liệu không ghép nhóm",on:true}];
+var LV={1:"Nhận biết",2:"Thông hiểu",3:"Vận dụng"};
+var MAPS={
+1:[
+["1. Mệnh đề",[
+ R`Mệnh đề: khẳng định chỉ có thể đúng hoặc sai (không thể vừa đúng vừa sai). Câu hỏi, câu cảm thán, câu mệnh lệnh không phải mệnh đề`,
+ R`Mệnh đề chứa biến: chưa biết đúng hay sai; gán giá trị cho biến thì thành mệnh đề`,
+ R`Phủ định $\overline{P}$: $P$ đúng thì $\overline{P}$ sai và ngược lại. Ví dụ: phủ định của $a\ge b$ là $a<b$`,
+ R`Kéo theo $P\Rightarrow Q$ (nếu $P$ thì $Q$): chỉ sai khi $P$ đúng và $Q$ sai`,
+ R`Mệnh đề đảo của $P\Rightarrow Q$ là $Q\Rightarrow P$ (đảo của mệnh đề đúng chưa chắc đúng)`,
+ R`Tương đương $P\Leftrightarrow Q$: đúng khi $P,Q$ cùng đúng hoặc cùng sai; đọc “khi và chỉ khi”, “điều kiện cần và đủ”`,
+ R`$P\Rightarrow Q$ đúng thì $P$ là điều kiện đủ để có $Q$, $Q$ là điều kiện cần để có $P$`,
+ R`$\forall x$: với mọi $x$; $\exists x$: tồn tại $x$`,
+ R`Phủ định: $\overline{\forall x,\,P(x)}$ là $\exists x,\,\overline{P(x)}$; $\overline{\exists x,\,P(x)}$ là $\forall x,\,\overline{P(x)}$`]],
+["2. Tập hợp",[
+ R`$a\in A$: $a$ thuộc $A$; $a\notin A$: $a$ không thuộc $A$`,
+ R`Cách cho tập hợp: liệt kê phần tử $\{1;2;3\}$ hoặc nêu tính chất đặc trưng $\{x\mid P(x)\}$`,
+ R`Tập con $A\subset B$: mọi phần tử của $A$ đều thuộc $B$. Luôn có $A\subset A$, $\varnothing\subset A$`,
+ R`Hai tập bằng nhau: $A=B\iff A\subset B$ và $B\subset A$`,
+ R`Tập rỗng $\varnothing$: không có phần tử nào`,
+ R`Tập có $n$ phần tử thì có $2^n$ tập con`,
+ R`Biểu đồ Ven: dùng hình kín minh họa tập hợp`]],
+["3. Các tập hợp số",[
+ R`$\mathbb{N}^*\subset\mathbb{N}\subset\mathbb{Z}\subset\mathbb{Q}\subset\mathbb{R}$`,
+ R`$\mathbb{Q}$: số thập phân hữu hạn hoặc vô hạn tuần hoàn; số vô tỉ là số thập phân vô hạn không tuần hoàn (như $\sqrt{2}$, $\pi$)`,
+ R`Khoảng $(a;b)$, đoạn $[a;b]$, nửa khoảng $[a;b)$ và $(a;b]$`,
+ R`$(-\infty;a)$, $(a;+\infty)$, $\mathbb{R}=(-\infty;+\infty)$; $\pm\infty$ không phải số nên luôn đi với ngoặc tròn`]],
+["4. Các phép toán trên tập hợp",[
+ R`Giao $A\cap B=\{x\mid x\in A\text{ và }x\in B\}$`,
+ R`Hợp $A\cup B=\{x\mid x\in A\text{ hoặc }x\in B\}$`,
+ R`Hiệu $A\setminus B=\{x\mid x\in A\text{ và }x\notin B\}$`,
+ R`Phần bù: khi $A\subset E$ thì $C_E A=E\setminus A$`,
+ R`Luôn có $A\cap B\subset A\subset A\cup B$`,
+ R`Với khoảng, đoạn: vẽ trục số rồi lấy phần chung (giao), phần phủ (hợp); chú ý đầu mút có lấy hay không`]]
+],
+2:[
+["1. Bất phương trình bậc nhất hai ẩn",[
+ R`Dạng $ax+by\le c$ (hoặc $<,\ge,>$), trong đó $a,b$ không đồng thời bằng $0$`,
+ R`Nghiệm: cặp số $(x_0;y_0)$ làm bất đẳng thức đúng`,
+ R`Miền nghiệm: một nửa mặt phẳng có bờ là đường thẳng $d:\ ax+by=c$`,
+ R`Dấu $\le,\ge$: tính cả bờ (vẽ nét liền); dấu $<,>$: không tính bờ (vẽ nét đứt)`]],
+["2. Biểu diễn miền nghiệm",[
+ R`Bước 1: vẽ đường thẳng $d:\ ax+by=c$`,
+ R`Bước 2: lấy điểm $M(x_0;y_0)$ không nằm trên $d$ (thường lấy gốc $O$ nếu $c\ne 0$), thay vào bất phương trình`,
+ R`Bước 3: nếu đúng thì miền nghiệm là nửa mặt phẳng bờ $d$ chứa $M$; nếu sai thì là nửa mặt phẳng còn lại`]],
+["3. Hệ bất phương trình bậc nhất hai ẩn",[
+ R`Hệ gồm một số bất phương trình bậc nhất hai ẩn; nghiệm của hệ là nghiệm chung của mọi bất phương trình`,
+ R`Miền nghiệm của hệ là giao các miền nghiệm của từng bất phương trình (thường là một đa giác hoặc miền không bị chặn)`,
+ R`Cách làm: biểu diễn từng bất phương trình trên cùng một hệ trục, gạch bỏ phần không thuộc miền nghiệm, phần còn lại là miền nghiệm`]],
+["4. Ứng dụng: giá trị lớn nhất, nhỏ nhất",[
+ R`Cần tìm GTLN, GTNN của $F=ax+by$ trên miền nghiệm là đa giác`,
+ R`$F$ đạt GTLN, GTNN tại một trong các đỉnh của đa giác`,
+ R`Cách làm: tìm tọa độ các đỉnh, tính $F$ tại từng đỉnh rồi so sánh`,
+ R`Bài toán thực tế: đặt ẩn $x,y$, lập hệ ràng buộc ($x\ge0,\ y\ge0$, giới hạn nguyên liệu, thời gian…), lập hàm lãi/chi phí rồi tối ưu`]]
+],
+3:[
+["1. Giá trị lượng giác của góc từ $0^\circ$ đến $180^\circ$",[
+ R`Trên nửa đường tròn đơn vị, điểm $M(x_0;y_0)$ ứng với góc $\alpha$: $\sin\alpha=y_0$, $\cos\alpha=x_0$`,
+ R`$\tan\alpha=\dfrac{y_0}{x_0}$ (với $\alpha\ne 90^\circ$), $\cot\alpha=\dfrac{x_0}{y_0}$ (với $\alpha\ne 0^\circ,180^\circ$)`,
+ R`Hai góc bù nhau: $\sin(180^\circ-\alpha)=\sin\alpha$; $\cos$, $\tan$, $\cot$ đổi dấu`,
+ R`Góc tù: $\cos\alpha<0$, $\tan\alpha<0$; $\sin\alpha\ge 0$ với mọi $\alpha\in[0^\circ;180^\circ]$`,
+ R`$\sin^2\alpha+\cos^2\alpha=1$`,
+ R`Giá trị đặc biệt: $\sin 30^\circ=\dfrac12$, $\sin 45^\circ=\dfrac{\sqrt2}{2}$, $\sin 60^\circ=\dfrac{\sqrt3}{2}$, $\cos$ tương ứng đảo thứ tự`]],
+["2. Định lí côsin",[
+ R`$a^2=b^2+c^2-2bc\cos A$ (và hai công thức tương tự cho $b^2$, $c^2$)`,
+ R`Hệ quả: $\cos A=\dfrac{b^2+c^2-a^2}{2bc}$`,
+ R`Dùng khi biết hai cạnh và góc xen giữa, hoặc biết ba cạnh`,
+ R`$A=90^\circ$ thì trở về định lí Pythagore. Dấu của $\cos A$ cho biết $A$ nhọn, vuông hay tù`]],
+["3. Định lí sin",[
+ R`$\dfrac{a}{\sin A}=\dfrac{b}{\sin B}=\dfrac{c}{\sin C}=2R$ ($R$ là bán kính đường tròn ngoại tiếp)`,
+ R`Dùng khi biết một cạnh và hai góc, hoặc hai cạnh và góc đối của một cạnh đó`,
+ R`Cạnh lớn hơn thì đối diện góc lớn hơn`]],
+["4. Công thức tính diện tích",[
+ R`$S=\dfrac12 ab\sin C=\dfrac12 bc\sin A=\dfrac12 ca\sin B$`,
+ R`$S=\dfrac{abc}{4R}$ và $S=pr$ ($r$: bán kính đường tròn nội tiếp)`,
+ R`Công thức Heron: $S=\sqrt{p(p-a)(p-b)(p-c)}$ với $p=\dfrac{a+b+c}{2}$`]],
+["5. Giải tam giác và ứng dụng",[
+ R`Giải tam giác: tìm các cạnh, góc còn lại khi biết một số yếu tố`,
+ R`Nhớ: $A+B+C=180^\circ$`,
+ R`Chọn định lí theo dữ kiện: hai cạnh + góc xen giữa hoặc ba cạnh dùng côsin; có cặp cạnh–góc đối dùng sin`,
+ R`Ứng dụng: đo khoảng cách, chiều cao khi không đo trực tiếp được`]]
+],
+4:[
+["1. Khái niệm vectơ",[
+ R`Vectơ là đoạn thẳng có hướng: $\overrightarrow{AB}$ có điểm đầu $A$, điểm cuối $B$; độ dài $|\overrightarrow{AB}|=AB$`,
+ R`Cùng phương: giá song song hoặc trùng nhau; cùng hướng hoặc ngược hướng`,
+ R`Hai vectơ bằng nhau: cùng hướng và cùng độ dài. Vectơ-không $\vec 0$: cùng phương, cùng hướng với mọi vectơ`]],
+["2. Tổng và hiệu của hai vectơ",[
+ R`Quy tắc ba điểm: $\overrightarrow{AB}+\overrightarrow{BC}=\overrightarrow{AC}$`,
+ R`Quy tắc hình bình hành: $ABCD$ là hình bình hành thì $\overrightarrow{AB}+\overrightarrow{AD}=\overrightarrow{AC}$`,
+ R`Hiệu: $\overrightarrow{OA}-\overrightarrow{OB}=\overrightarrow{BA}$; vectơ đối của $\vec a$ là $-\vec a$`,
+ R`$I$ là trung điểm $AB$: $\overrightarrow{IA}+\overrightarrow{IB}=\vec 0$; $G$ là trọng tâm tam giác $ABC$: $\overrightarrow{GA}+\overrightarrow{GB}+\overrightarrow{GC}=\vec 0$`]],
+["3. Tích của vectơ với một số",[
+ R`$k\vec a$ cùng hướng $\vec a$ nếu $k>0$, ngược hướng nếu $k<0$; độ dài $|k|\cdot|\vec a|$`,
+ R`$\vec a,\vec b$ ($\vec b\ne\vec 0$) cùng phương $\iff\vec a=k\vec b$; $A,B,C$ thẳng hàng $\iff\overrightarrow{AB}=k\overrightarrow{AC}$`,
+ R`$I$ là trung điểm $AB$: $\overrightarrow{MA}+\overrightarrow{MB}=2\overrightarrow{MI}$; $G$ là trọng tâm: $\overrightarrow{MA}+\overrightarrow{MB}+\overrightarrow{MC}=3\overrightarrow{MG}$`]],
+["4. Vectơ trong mặt phẳng tọa độ",[
+ R`$\vec a=(x;y)$; $\overrightarrow{AB}=(x_B-x_A;\ y_B-y_A)$; $|\vec a|=\sqrt{x^2+y^2}$`,
+ R`$\vec a\pm\vec b=(x\pm x';\ y\pm y')$; $k\vec a=(kx;ky)$`,
+ R`Trung điểm $I$ của $AB$: $\left(\dfrac{x_A+x_B}{2};\dfrac{y_A+y_B}{2}\right)$; trọng tâm $G$: lấy trung bình cộng ba tọa độ`,
+ R`$\vec a,\vec b$ cùng phương $\iff xy'-x'y=0$ (khi $\vec b\ne\vec 0$)`]],
+["5. Tích vô hướng của hai vectơ",[
+ R`$\vec a\cdot\vec b=|\vec a||\vec b|\cos(\vec a,\vec b)$; $\vec a^2=|\vec a|^2$`,
+ R`Tọa độ: $\vec a\cdot\vec b=xx'+yy'$`,
+ R`$\vec a\perp\vec b\iff\vec a\cdot\vec b=0$`,
+ R`Góc giữa hai vectơ: $\cos(\vec a,\vec b)=\dfrac{\vec a\cdot\vec b}{|\vec a||\vec b|}$`]]
+],
+5:[
+["1. Số gần đúng và sai số",[
+ R`$a$ là số gần đúng của số đúng $\bar a$: sai số tuyệt đối $\Delta_a=|a-\bar a|$`,
+ R`Độ chính xác $d$: $\Delta_a\le d$, viết $\bar a=a\pm d$`,
+ R`Sai số tương đối $\delta_a=\dfrac{\Delta_a}{|a|}$ (thường viết dưới dạng phần trăm); càng nhỏ thì phép đo càng chính xác`,
+ R`Quy tròn: nhìn chữ số ngay sau hàng quy tròn; từ $5$ trở lên thì tăng thêm $1$, nhỏ hơn $5$ thì bỏ`]],
+["2. Các số đặc trưng đo xu thế trung tâm",[
+ R`Số trung bình $\bar x=\dfrac{x_1+x_2+\dots+x_n}{n}$`,
+ R`Trung vị $M_e$: sắp xếp tăng dần; $n$ lẻ lấy số ở giữa, $n$ chẵn lấy trung bình cộng hai số ở giữa`,
+ R`Mốt $M_o$: giá trị xuất hiện nhiều nhất (có thể có nhiều mốt)`,
+ R`Tứ phân vị: $Q_2=M_e$; $Q_1$ là trung vị nửa số liệu bên dưới $Q_2$, $Q_3$ là trung vị nửa bên trên (khi $n$ lẻ không tính $Q_2$ vào hai nửa)`]],
+["3. Các số đặc trưng đo độ phân tán",[
+ R`Khoảng biến thiên $R=x_{\max}-x_{\min}$; khoảng tứ phân vị $\Delta_Q=Q_3-Q_1$`,
+ R`Phương sai $s^2=\dfrac{1}{n}\sum(x_i-\bar x)^2$; độ lệch chuẩn $s=\sqrt{s^2}$`,
+ R`Các giá trị này càng lớn thì số liệu càng phân tán`,
+ R`Giá trị ngoại lệ: $x<Q_1-1{,}5\Delta_Q$ hoặc $x>Q_3+1{,}5\Delta_Q$`]]
+]
+};
+var DATA=[
+{c:1,t:"mc",lv:1,q:"Câu nào sau đây là một mệnh đề?",o:["Hôm nay trời đẹp quá!",R`$2+3=6$`,"Bạn đang đi đâu đấy?","Hãy làm bài tập đi."],a:1,e:R`Mệnh đề là câu khẳng định có tính đúng hoặc sai. $2+3=6$ là mệnh đề (sai). Các câu còn lại là câu cảm thán, câu hỏi, câu mệnh lệnh nên không phải mệnh đề.`},
+{c:1,t:"mc",lv:1,q:R`Phủ định của mệnh đề “$\forall x\in\mathbb{R},\ x^2\ge 0$” là`,o:[R`$\exists x\in\mathbb{R},\ x^2<0$`,R`$\forall x\in\mathbb{R},\ x^2<0$`,R`$\exists x\in\mathbb{R},\ x^2\le 0$`,R`$\forall x\in\mathbb{R},\ x^2\le 0$`],a:0,e:R`Phủ định của $\forall$ là $\exists$, phủ định của $x^2\ge 0$ là $x^2<0$.`},
+{c:1,t:"mc",lv:2,q:R`Cho $A=\{1;2;3;4\}$ và $B=\{2;4;6\}$. Tập hợp $A\cap B$ là`,o:[R`$\{2;4\}$`,R`$\{1;2;3;4;6\}$`,R`$\{1;3\}$`,R`$\{6\}$`],a:0,e:R`Giao gồm các phần tử thuộc cả $A$ và $B$, đó là $2$ và $4$.`},
+{c:1,t:"mc",lv:3,q:R`Cho $A=[-2;5)$ và $B=(1;7]$. Tập hợp $A\setminus B$ là`,o:[R`$[-2;1]$`,R`$[-2;1)$`,R`$(1;5)$`,R`$(5;7]$`],a:0,e:R`$A\setminus B$ gồm các số thuộc $A$ mà không thuộc $B$: $-2\le x<5$ và $x\le 1$ (vì $x\notin(1;7]$). Vậy $A\setminus B=[-2;1]$.`},
+{c:1,t:"tf",lv:2,q:"Xét các phát biểu về mệnh đề. Chọn Đúng hoặc Sai cho mỗi ý.",s:[
+ {x:R`Mệnh đề “$\sqrt{2}$ là số hữu tỉ” là mệnh đề đúng.`,a:false,e:R`$\sqrt{2}$ là số vô tỉ nên mệnh đề này sai.`},
+ {x:R`Mệnh đề “$\forall x\in\mathbb{N},\ x\ge 0$” là mệnh đề đúng.`,a:true,e:R`Mọi số tự nhiên đều không âm.`},
+ {x:R`Mệnh đề $P\Rightarrow Q$ chỉ sai khi $P$ đúng và $Q$ sai.`,a:true,e:R`Đúng theo định nghĩa mệnh đề kéo theo.`},
+ {x:R`Mệnh đề đảo của “Nếu $a=b$ thì $a^2=b^2$” là mệnh đề đúng.`,a:false,e:R`Mệnh đề đảo là “Nếu $a^2=b^2$ thì $a=b$”, sai với $a=1,\ b=-1$.`}]},
+{c:1,t:"tf",lv:1,q:R`Cho tập hợp $A=\{x\in\mathbb{Z}\mid -2\le x<3\}$. Chọn Đúng hoặc Sai cho mỗi ý.`,s:[
+ {x:R`$A=\{-2;-1;0;1;2\}$`,a:true,e:R`Các số nguyên từ $-2$ đến nhỏ hơn $3$ là $-2;-1;0;1;2$.`},
+ {x:R`$3\in A$`,a:false,e:R`Điều kiện là $x<3$ nên $3\notin A$.`},
+ {x:R`$A$ có $5$ phần tử.`,a:true,e:R`Liệt kê được đúng $5$ phần tử.`},
+ {x:R`$\{0;1\}\subset A$`,a:true,e:R`Cả $0$ và $1$ đều thuộc $A$.`}]},
+{c:1,t:"tf",lv:3,q:R`Cho $A=(-\infty;3]$ và $B=(0;+\infty)$. Chọn Đúng hoặc Sai cho mỗi ý.`,s:[
+ {x:R`$A\cap B=(0;3]$`,a:true,e:R`Cần $x\le 3$ và $x>0$.`},
+ {x:R`$A\cup B=\mathbb{R}$`,a:true,e:R`Mọi số thực đều $\le 3$ hoặc $>0$.`},
+ {x:R`$A\setminus B=(-\infty;0)$`,a:false,e:R`Số $0$ thuộc $A$ và không thuộc $B$, nên $A\setminus B=(-\infty;0]$.`},
+ {x:R`$3\in A\cap B$`,a:true,e:R`$3\le 3$ và $3>0$.`}]},
+{c:1,t:"sa",lv:2,q:R`Tập hợp $A=\{x\in\mathbb{Z}\mid |x|\le 2\}$ có bao nhiêu phần tử?`,a:"5",e:R`$|x|\le 2\iff -2\le x\le 2$, các số nguyên là $-2;-1;0;1;2$, tức $5$ phần tử.`},
+{c:1,t:"sa",lv:3,q:R`Cho $X$ là tập hợp các số tự nhiên nhỏ hơn $10$ và chia hết cho $3$. Hỏi $X$ có bao nhiêu tập con?`,a:"16",e:R`$X=\{0;3;6;9\}$ có $4$ phần tử nên có $2^4=16$ tập con.`},
+{c:1,t:"sa",lv:3,q:R`Có bao nhiêu số nguyên thuộc tập hợp $[-3;4)\cap(-1;6]$?`,a:"4",e:R`Giao là $(-1;4)$, các số nguyên là $0;1;2;3$, tức $4$ số.`},
+{c:1,t:"mc",lv:1,q:"Mệnh đề nào sau đây là mệnh đề đúng?",o:[R`$\sqrt{2}$ là số hữu tỉ.`,"17 là số nguyên tố.",R`$-5>-3$.`,"9 chia hết cho 2."],a:1,e:R`$17$ chỉ có hai ước là $1$ và $17$ nên là số nguyên tố. $\sqrt2$ là số vô tỉ; $-5<-3$; $9$ không chia hết cho $2$.`},
+{c:1,t:"mc",lv:1,q:R`Mệnh đề $P\Rightarrow Q$ chỉ sai trong trường hợp nào?`,o:[R`$P$ đúng, $Q$ sai`,R`$P$ sai, $Q$ đúng`,R`$P$ sai, $Q$ sai`,R`$P$ đúng, $Q$ đúng`],a:0,e:R`$P\Rightarrow Q$ chỉ sai khi $P$ đúng và $Q$ sai.`},
+{c:1,t:"mc",lv:1,q:R`Cho $A=\{1;2;3\}$. Tập nào sau đây là tập con của $A$?`,o:[R`$\{1;4\}$`,R`$\{2;3\}$`,R`$\{0;1\}$`,R`$\{3;4\}$`],a:1,e:R`Tập con của $A$ chỉ chứa phần tử thuộc $A$. Chỉ $\{2;3\}$ thỏa mãn.`},
+{c:1,t:"mc",lv:2,q:"Phủ định của mệnh đề “Mọi học sinh lớp 10A đều đi học đúng giờ” là",o:["Có ít nhất một học sinh lớp 10A đi học không đúng giờ.","Mọi học sinh lớp 10A đều đi học không đúng giờ.","Không có học sinh nào của lớp 10A đi học đúng giờ.","Có ít nhất một học sinh lớp 10A đi học đúng giờ."],a:0,e:R`Phủ định của “mọi” ($\forall$) là “tồn tại” ($\exists$), và “đúng giờ” đổi thành “không đúng giờ”.`},
+{c:1,t:"mc",lv:2,q:"Mệnh đề đảo của mệnh đề “Nếu tứ giác là hình chữ nhật thì nó có hai đường chéo bằng nhau” là",o:["Nếu tứ giác có hai đường chéo bằng nhau thì nó là hình chữ nhật.","Nếu tứ giác không là hình chữ nhật thì hai đường chéo không bằng nhau.","Tứ giác là hình chữ nhật khi và chỉ khi nó có hai đường chéo bằng nhau.","Nếu tứ giác có hai đường chéo bằng nhau thì nó là hình vuông."],a:0,e:R`Mệnh đề đảo của $P\Rightarrow Q$ là $Q\Rightarrow P$ (đổi chỗ giả thiết và kết luận).`},
+{c:1,t:"mc",lv:2,q:R`Cho $A=(-3;2]$ và $B=[0;5)$. Tập hợp $A\cup B$ là`,o:[R`$(-3;5)$`,R`$[0;2]$`,R`$(-3;5]$`,R`$[-3;5)$`],a:0,e:R`Hợp của hai tập gồm các số thuộc ít nhất một tập: từ $-3$ (không lấy) đến $5$ (không lấy). Vậy $A\cup B=(-3;5)$.`},
+{c:1,t:"mc",lv:3,q:R`Cho $A=(-\infty;3]$ và $B=(-1;+\infty)$. Tập hợp $\mathbb{R}\setminus(A\cap B)$ là`,o:[R`$(-\infty;-1]\cup(3;+\infty)$`,R`$(-\infty;-1)\cup[3;+\infty)$`,R`$(-1;3]$`,R`$(-\infty;-1]\cup[3;+\infty)$`],a:0,e:R`$A\cap B=(-1;3]$. Phần bù trong $\mathbb{R}$ gồm các số $\le -1$ hoặc $>3$, tức $(-\infty;-1]\cup(3;+\infty)$.`},
+{c:1,t:"tf",lv:1,q:"Xét tính đúng sai của các mệnh đề sau.",s:[
+ {x:"15 chia hết cho 3 và chia hết cho 5.",a:true,e:R`$15=3\cdot5$.`},
+ {x:R`$-3<-5$.`,a:false,e:R`$-3>-5$.`},
+ {x:R`$\exists x\in\mathbb{R},\ x^2=4$.`,a:true,e:R`Chẳng hạn $x=2$.`},
+ {x:R`$\forall x\in\mathbb{R},\ x^2>0$.`,a:false,e:R`Với $x=0$ thì $x^2=0$, không lớn hơn $0$.`}]},
+{c:1,t:"tf",lv:2,q:"Cho $P$: “$ABCD$ là hình vuông” và $Q$: “$ABCD$ là hình chữ nhật”. Chọn Đúng hoặc Sai cho mỗi ý.",s:[
+ {x:R`Mệnh đề $P\Rightarrow Q$ đúng.`,a:true,e:R`Hình vuông là hình chữ nhật.`},
+ {x:R`Mệnh đề $Q\Rightarrow P$ đúng.`,a:false,e:R`Hình chữ nhật chưa chắc là hình vuông.`},
+ {x:R`$P$ là điều kiện đủ để có $Q$.`,a:true,e:R`Vì $P\Rightarrow Q$ đúng.`},
+ {x:R`$Q$ là điều kiện đủ để có $P$.`,a:false,e:R`$Q\Rightarrow P$ sai nên $Q$ chỉ là điều kiện cần của $P$.`}]},
+{c:1,t:"tf",lv:2,q:R`Cho $A=\{x\in\mathbb{N}\mid x\le 4\}$ và $B=\{0;2;4;6\}$. Chọn Đúng hoặc Sai cho mỗi ý.`,s:[
+ {x:R`$A\cap B=\{2;4\}$`,a:false,e:R`$A=\{0;1;2;3;4\}$ nên $A\cap B=\{0;2;4\}$ (số $0$ thuộc cả hai).`},
+ {x:R`$A\cup B=\{0;1;2;3;4;6\}$`,a:true,e:R`Gộp các phần tử của hai tập, mỗi phần tử viết một lần.`},
+ {x:R`$B\setminus A=\{6\}$`,a:true,e:R`Chỉ $6$ thuộc $B$ mà không thuộc $A$.`},
+ {x:R`$A\setminus B=\{1;3\}$`,a:true,e:R`Các phần tử của $A$ không thuộc $B$ là $1$ và $3$.`}]},
+{c:1,t:"tf",lv:2,q:"Về các tập hợp số, chọn Đúng hoặc Sai cho mỗi ý.",s:[
+ {x:R`$\mathbb{N}\subset\mathbb{Z}$`,a:true,e:R`Mọi số tự nhiên đều là số nguyên.`},
+ {x:R`$\sqrt3\in\mathbb{Q}$`,a:false,e:R`$\sqrt3$ là số vô tỉ.`},
+ {x:R`$0{,}\overline{3}\in\mathbb{Q}$`,a:true,e:R`$0{,}\overline{3}=\dfrac13$ là số thập phân vô hạn tuần hoàn.`},
+ {x:R`$\mathbb{R}\setminus\mathbb{Q}$ là tập hợp các số vô tỉ.`,a:true,e:R`Mỗi số thực hoặc là số hữu tỉ, hoặc là số vô tỉ.`}]},
+{c:1,t:"tf",lv:3,q:R`Cho $A=[-2;4)$, $B=(1;+\infty)$ và $C=(-\infty;3]$. Chọn Đúng hoặc Sai cho mỗi ý.`,s:[
+ {x:R`$A\cap B=(1;4)$`,a:true,e:R`Cần $-2\le x<4$ và $x>1$.`},
+ {x:R`$A\cap C=[-2;3]$`,a:true,e:R`Cần $-2\le x<4$ và $x\le 3$.`},
+ {x:R`$B\cap C=[1;3]$`,a:false,e:R`$1\notin B$ nên $B\cap C=(1;3]$.`},
+ {x:R`$A\cup B=[-2;+\infty)$`,a:true,e:R`$A$ phủ từ $-2$ đến $4$, $B$ phủ từ $1$ trở đi, hai tập nối liền nhau.`}]},
+{c:1,t:"tf",lv:3,q:"Lớp 10A có 40 học sinh. Trong đó 25 em thích bóng đá, 20 em thích bóng rổ và 8 em không thích môn nào. Chọn Đúng hoặc Sai cho mỗi ý.",s:[
+ {x:"Có 32 em thích ít nhất một trong hai môn.",a:true,e:R`$40-8=32$.`},
+ {x:"Có 13 em thích cả hai môn.",a:true,e:R`$25+20-32=13$.`},
+ {x:"Có 12 em chỉ thích bóng đá.",a:true,e:R`$25-13=12$.`},
+ {x:"Có 8 em chỉ thích bóng rổ.",a:false,e:R`$20-13=7$ em.`}]},
+{c:1,t:"sa",lv:1,q:R`Tập hợp $A=\{x\in\mathbb{N}\mid x<5\}$ có bao nhiêu phần tử?`,a:"5",e:R`$A=\{0;1;2;3;4\}$ có $5$ phần tử.`},
+{c:1,t:"sa",lv:1,q:R`Tập hợp $\{a;b;c\}$ có bao nhiêu tập con?`,a:"8",e:R`Tập có $3$ phần tử có $2^3=8$ tập con.`},
+{c:1,t:"sa",lv:2,q:R`Cho $A=\{1;2;3;4;5\}$ và $B=\{4;5;6;7\}$. Tập $A\cup B$ có bao nhiêu phần tử?`,a:"7",e:R`$A\cup B=\{1;2;3;4;5;6;7\}$.`},
+{c:1,t:"sa",lv:2,q:R`Có bao nhiêu số nguyên thuộc nửa khoảng $(-3;2]$?`,a:"5",e:R`Các số nguyên là $-2;-1;0;1;2$.`},
+{c:1,t:"sa",lv:3,q:R`Cho $A=\{x\in\mathbb{Z}\mid |x-1|\le 3\}$. Tính tổng các phần tử của $A$.`,a:"7",e:R`$|x-1|\le3\iff-2\le x\le4$, nên $A=\{-2;-1;0;1;2;3;4\}$, tổng bằng $7$.`},
+{c:1,t:"sa",lv:3,q:"Lớp 10B có 45 học sinh, trong đó 27 em giỏi Toán, 22 em giỏi Văn và 10 em không giỏi môn nào trong hai môn này. Hỏi có bao nhiêu em giỏi cả hai môn?",a:"14",e:R`Số em giỏi ít nhất một môn là $45-10=35$. Số em giỏi cả hai là $27+22-35=14$.`},
+{c:1,t:"sa",lv:3,q:R`Cho $A=[m;m+2]$ và $B=[0;5]$. Có bao nhiêu số nguyên $m$ để $A\subset B$?`,a:"4",e:R`$A\subset B\iff m\ge0$ và $m+2\le5$, tức $0\le m\le3$. Có $4$ số nguyên: $0;1;2;3$.`},
+{c:2,t:"mc",lv:1,q:R`Cặp số nào sau đây là nghiệm của bất phương trình $2x+y\le 3$?`,o:[R`$(1;1)$`,R`$(2;1)$`,R`$(0;4)$`,R`$(3;0)$`],a:0,e:R`Thay $(1;1)$: $2\cdot1+1=3\le 3$ (đúng). Các cặp còn lại cho $5$, $4$, $6$ đều lớn hơn $3$.`},
+{c:2,t:"mc",lv:1,q:"Bất phương trình nào sau đây là bất phương trình bậc nhất hai ẩn?",o:[R`$x^2+y\le 1$`,R`$2x-3y\ge 5$`,R`$xy<2$`,R`$\sqrt{x}+y>0$`],a:1,e:R`Bất phương trình bậc nhất hai ẩn có dạng $ax+by\ \square\ c$ với $\square\in\{<,>,\le,\ge\}$. Chỉ $2x-3y\ge 5$ có dạng này.`},
+{c:2,t:"mc",lv:2,q:R`Điểm $O(0;0)$ không thuộc miền nghiệm của bất phương trình nào sau đây?`,o:[R`$x+y>2$`,R`$x+y<2$`,R`$x-y\le 1$`,R`$2x+y\le 5$`],a:0,e:R`Thay $O(0;0)$ vào $x+y>2$ được $0>2$ (sai), nên $O$ không thuộc miền nghiệm. Ba bất phương trình còn lại đều đúng tại $O$.`},
+{c:2,t:"mc",lv:3,q:R`Cho đa giác $OABC$ với $O(0;0),\ A(4;0),\ B(3;2),\ C(0;3)$. Giá trị lớn nhất của $F=x+2y$ trên miền đa giác này là`,o:[R`$7$`,R`$6$`,R`$4$`,R`$9$`],a:0,e:R`$F$ đạt giá trị lớn nhất tại một đỉnh: $F(O)=0$, $F(A)=4$, $F(B)=3+4=7$, $F(C)=6$. Vậy giá trị lớn nhất là $7$.`},
+{c:2,t:"tf",lv:1,q:R`Cho bất phương trình $x-2y\le 4$. Chọn Đúng hoặc Sai cho mỗi ý.`,s:[
+ {x:R`$(0;0)$ là một nghiệm.`,a:true,e:R`$0-0=0\le 4$ (đúng).`},
+ {x:R`$(4;1)$ là một nghiệm.`,a:true,e:R`$4-2\cdot1=2\le 4$ (đúng).`},
+ {x:R`$(6;0)$ là một nghiệm.`,a:false,e:R`$6-0=6>4$ nên không phải nghiệm.`},
+ {x:R`Đường thẳng bờ của miền nghiệm là $x-2y=4$.`,a:true,e:R`Bờ là đường thẳng thu được khi thay dấu bất đẳng thức bằng dấu “$=$”.`}]},
+{c:2,t:"tf",lv:2,q:R`Cho hệ $\begin{cases}x\ge 0\\ y\ge 0\\ x+y\le 4\end{cases}$. Chọn Đúng hoặc Sai cho mỗi ý.`,s:[
+ {x:R`$(1;2)$ là một nghiệm của hệ.`,a:true,e:R`$1\ge0$, $2\ge0$, $1+2=3\le 4$ (đúng cả ba).`},
+ {x:R`$(3;2)$ là một nghiệm của hệ.`,a:false,e:R`$3+2=5>4$ nên vi phạm bất phương trình thứ ba.`},
+ {x:R`$(0;4)$ là một nghiệm của hệ.`,a:true,e:R`$0\ge0$, $4\ge0$, $0+4=4\le 4$.`},
+ {x:R`Miền nghiệm là tam giác có ba đỉnh $O(0;0)$, $A(4;0)$, $B(0;4)$.`,a:true,e:R`Ba đường $x=0$, $y=0$, $x+y=4$ cắt nhau tại ba điểm đó.`}]},
+{c:2,t:"tf",lv:3,q:R`Xét $F=3x+y$ trên miền nghiệm của hệ ở trên (tam giác $OAB$ với $O(0;0)$, $A(4;0)$, $B(0;4)$). Chọn Đúng hoặc Sai cho mỗi ý.`,s:[
+ {x:R`Tại $A(4;0)$, $F=12$.`,a:true,e:R`$3\cdot4+0=12$.`},
+ {x:R`Tại $B(0;4)$, $F=12$.`,a:false,e:R`$3\cdot0+4=4$.`},
+ {x:R`Giá trị lớn nhất của $F$ là $12$.`,a:true,e:R`$F(O)=0$, $F(A)=12$, $F(B)=4$; lớn nhất là $12$.`},
+ {x:R`Giá trị nhỏ nhất của $F$ là $4$.`,a:false,e:R`Giá trị nhỏ nhất là $F(O)=0$.`}]},
+{c:2,t:"sa",lv:2,q:R`Có bao nhiêu cặp số nguyên không âm $(x;y)$ là nghiệm của bất phương trình $x+y\le 2$?`,a:"6",e:R`$x+y=0$: $1$ cặp; $x+y=1$: $2$ cặp; $x+y=2$: $3$ cặp. Tổng cộng $6$ cặp.`},
+{c:2,t:"sa",lv:3,q:R`Tìm giá trị lớn nhất của $F=2x+3y$ trên miền nghiệm của hệ $x\ge 0,\ y\ge 0,\ x+y\le 4,\ x\le 3$.`,a:"12",e:R`Các đỉnh: $(0;0)$, $(3;0)$, $(3;1)$, $(0;4)$ cho $F=0;\ 6;\ 9;\ 12$. Lớn nhất là $12$.`},
+{c:2,t:"sa",lv:3,q:R`Một xưởng làm hai loại sản phẩm A và B. Mỗi sản phẩm A lãi $3$ triệu đồng, mỗi sản phẩm B lãi $2$ triệu đồng. Mỗi ngày xưởng làm tổng cộng không quá $10$ sản phẩm, trong đó sản phẩm A không quá $6$. Lãi lớn nhất mỗi ngày là bao nhiêu triệu đồng?`,a:"26",e:R`Gọi $x,y$ là số sản phẩm A, B: $x,y\ge0$, $x+y\le10$, $x\le6$; lãi $F=3x+2y$. Các đỉnh $(0;0),(6;0),(6;4),(0;10)$ cho $F=0;18;26;20$. Lớn nhất là $26$ triệu đồng.`},
+{c:2,t:"mc",lv:1,q:R`Miền nghiệm của bất phương trình $ax+by\le c$ (với $a,b$ không đồng thời bằng $0$) là`,o:["một nửa mặt phẳng có bờ là đường thẳng $ax+by=c$, kể cả bờ.","chính đường thẳng $ax+by=c$.","một điểm duy nhất trên mặt phẳng.","phần bên trong một đường tròn."],a:0,e:R`Miền nghiệm của bất phương trình bậc nhất hai ẩn là một nửa mặt phẳng; với dấu $\le$ hoặc $\ge$ thì tính cả bờ.`},
+{c:2,t:"mc",lv:1,q:R`Cặp số nào sau đây là nghiệm của bất phương trình $x-y>2$?`,o:[R`$(4;1)$`,R`$(3;1)$`,R`$(2;0)$`,R`$(0;0)$`],a:0,e:R`$(4;1)$: $4-1=3>2$ (đúng). $(3;1)$ và $(2;0)$ cho $2$, không lớn hơn $2$; $(0;0)$ cho $0$.`},
+{c:2,t:"mc",lv:1,q:R`Đường thẳng bờ của miền nghiệm bất phương trình $3x-2y\ge 6$ là`,o:[R`$3x-2y=6$`,R`$3x+2y=6$`,R`$2x-3y=6$`,R`$x=6$`],a:0,e:R`Bờ thu được khi thay dấu bất đẳng thức bằng dấu “$=$”.`},
+{c:2,t:"mc",lv:2,q:R`Điểm nào sau đây thuộc miền nghiệm của bất phương trình $x+2y<4$?`,o:[R`$(1;1)$`,R`$(2;1)$`,R`$(4;1)$`,R`$(0;2)$`],a:0,e:R`$(1;1)$: $1+2=3<4$ (đúng). $(2;1)$ và $(0;2)$ cho đúng $4$ (nằm trên bờ, mà dấu là $<$ nên không thuộc miền); $(4;1)$ cho $6$.`},
+{c:2,t:"mc",lv:2,q:R`Miền nghiệm của bất phương trình $x-y\le 0$ chứa điểm nào sau đây?`,o:[R`$(1;2)$`,R`$(2;1)$`,R`$(3;0)$`,R`$(5;1)$`],a:0,e:R`$(1;2)$: $1-2=-1\le0$ (đúng). Ba điểm còn lại cho $1;3;4$, đều lớn hơn $0$.`},
+{c:2,t:"mc",lv:2,q:R`Miền nghiệm của hệ bất phương trình $x\ge0,\ y\ge0$ là`,o:["góc phần tư thứ nhất, kể cả hai tia trên các trục tọa độ.","góc phần tư thứ hai.","nửa mặt phẳng nằm phía trên trục hoành.","toàn bộ mặt phẳng tọa độ."],a:0,e:R`Cần đồng thời $x\ge0$ (bên phải trục tung) và $y\ge0$ (phía trên trục hoành), đó là góc phần tư thứ nhất kể cả biên.`},
+{c:2,t:"mc",lv:3,q:R`Miền nghiệm của một hệ bất phương trình là tam giác có ba đỉnh $A(1;1)$, $B(5;1)$, $C(3;4)$. Giá trị nhỏ nhất của $F=2x-y$ trên miền này là`,o:[R`$1$`,R`$2$`,R`$9$`,R`$-1$`],a:0,e:R`$F(A)=2-1=1$; $F(B)=10-1=9$; $F(C)=6-4=2$. Giá trị nhỏ nhất là $1$.`},
+{c:2,t:"tf",lv:1,q:R`Cho bất phương trình $2x+3y\ge 6$. Chọn Đúng hoặc Sai cho mỗi ý.`,s:[
+ {x:R`$(0;0)$ là một nghiệm.`,a:false,e:R`$0\ge6$ là sai.`},
+ {x:R`$(3;0)$ là một nghiệm.`,a:true,e:R`$6\ge6$ (đúng).`},
+ {x:R`$(0;2)$ là một nghiệm.`,a:true,e:R`$6\ge6$ (đúng).`},
+ {x:R`$(1;1)$ là một nghiệm.`,a:false,e:R`$2+3=5\ge6$ là sai.`}]},
+{c:2,t:"tf",lv:1,q:"Về bất phương trình bậc nhất hai ẩn, chọn Đúng hoặc Sai cho mỗi ý.",s:[
+ {x:R`$x+2y\le5$ là một bất phương trình bậc nhất hai ẩn.`,a:true,e:R`Có dạng $ax+by\le c$.`},
+ {x:R`$x^2+y\ge1$ là một bất phương trình bậc nhất hai ẩn.`,a:false,e:R`Có $x^2$ nên không phải bậc nhất.`},
+ {x:R`Với dấu $\le$ hoặc $\ge$, các điểm trên đường thẳng bờ thuộc miền nghiệm.`,a:true,e:R`Dấu có “$=$” thì tính cả bờ.`},
+ {x:R`Miền nghiệm của bất phương trình bậc nhất hai ẩn luôn là toàn bộ mặt phẳng.`,a:false,e:R`Miền nghiệm chỉ là một nửa mặt phẳng.`}]},
+{c:2,t:"tf",lv:2,q:R`Cho hệ bất phương trình gồm $x+y\le5$, $x\ge1$, $y\ge0$. Chọn Đúng hoặc Sai cho mỗi ý.`,s:[
+ {x:R`$(1;0)$ là một nghiệm của hệ.`,a:true,e:R`$1+0\le5$, $1\ge1$, $0\ge0$.`},
+ {x:R`$(0;1)$ là một nghiệm của hệ.`,a:false,e:R`$x=0$ không thỏa $x\ge1$.`},
+ {x:R`$(2;3)$ là một nghiệm của hệ.`,a:true,e:R`$2+3=5\le5$, $2\ge1$, $3\ge0$.`},
+ {x:R`$(4;2)$ là một nghiệm của hệ.`,a:false,e:R`$4+2=6>5$.`}]},
+{c:2,t:"tf",lv:2,q:R`Miền nghiệm của hệ $x+y\le5$, $x\ge1$, $y\ge0$ là một tam giác. Chọn Đúng hoặc Sai cho mỗi ý.`,s:[
+ {x:R`$(5;0)$ là một đỉnh của tam giác.`,a:true,e:R`Giao của $y=0$ và $x+y=5$.`},
+ {x:R`$(1;4)$ là một đỉnh của tam giác.`,a:true,e:R`Giao của $x=1$ và $x+y=5$.`},
+ {x:R`$(1;0)$ là một đỉnh của tam giác.`,a:true,e:R`Giao của $x=1$ và $y=0$.`},
+ {x:R`Diện tích tam giác bằng $16$.`,a:false,e:R`Tam giác vuông cân có hai cạnh góc vuông bằng $4$, diện tích $\dfrac12\cdot4\cdot4=8$.`}]},
+{c:2,t:"tf",lv:3,q:R`Xét $F=x+3y$ trên tam giác có các đỉnh $(1;0)$, $(5;0)$, $(1;4)$. Chọn Đúng hoặc Sai cho mỗi ý.`,s:[
+ {x:R`Tại $(1;0)$, $F=1$.`,a:true,e:R`$1+0=1$.`},
+ {x:R`Tại $(5;0)$, $F=5$.`,a:true,e:R`$5+0=5$.`},
+ {x:R`Giá trị lớn nhất của $F$ là $13$.`,a:true,e:R`Tại $(1;4)$: $1+12=13$, lớn hơn hai đỉnh còn lại.`},
+ {x:R`Giá trị nhỏ nhất của $F$ là $5$.`,a:false,e:R`Giá trị nhỏ nhất là $F(1;0)=1$.`}]},
+{c:2,t:"tf",lv:3,q:R`Một cửa hàng làm hai loại bánh X và Y. Gọi $x,y$ là số bánh mỗi loại, với các điều kiện $x\ge0$, $y\ge0$, $x\le60$, $y\le70$, $x+y\le100$. Lãi mỗi bánh X là $2$ nghìn đồng, mỗi bánh Y là $3$ nghìn đồng. Chọn Đúng hoặc Sai cho mỗi ý.`,s:[
+ {x:R`$(60;40)$ thỏa mọi điều kiện.`,a:true,e:R`$60\le60$, $40\le70$, $60+40=100\le100$.`},
+ {x:R`$(60;50)$ thỏa mọi điều kiện.`,a:false,e:R`$60+50=110>100$.`},
+ {x:R`Tại $(30;70)$, tiền lãi là $270$ nghìn đồng.`,a:true,e:R`$F=2\cdot30+3\cdot70=270$.`},
+ {x:R`Tiền lãi lớn nhất là $240$ nghìn đồng.`,a:false,e:R`Các đỉnh cho lãi $0;120;240;270;210$, lớn nhất là $270$ nghìn đồng tại $(30;70)$.`}]},
+{c:2,t:"sa",lv:1,q:R`Điểm $M(2;m)$ nằm trên đường thẳng $x+y=5$. Tìm $m$.`,a:"3",e:R`$2+m=5\Rightarrow m=3$.`},
+{c:2,t:"sa",lv:2,q:R`Có bao nhiêu cặp số nguyên dương $(x;y)$ là nghiệm của bất phương trình $x+y\le5$?`,a:"10",e:R`$x+y=2$: $1$ cặp; $x+y=3$: $2$ cặp; $x+y=4$: $3$ cặp; $x+y=5$: $4$ cặp. Tổng $10$ cặp.`},
+{c:2,t:"sa",lv:2,q:R`Có bao nhiêu cặp số nguyên không âm $(x;y)$ thỏa mãn $2x+y\le4$?`,a:"9",e:R`$x=0$: $y=0..4$ ($5$ cặp); $x=1$: $y=0..2$ ($3$ cặp); $x=2$: $y=0$ ($1$ cặp). Tổng $9$ cặp.`},
+{c:2,t:"sa",lv:2,q:R`Tìm giá trị lớn nhất của $F=x+y$ trên tam giác có các đỉnh $O(0;0)$, $A(3;0)$, $B(0;2)$.`,a:"3",e:R`$F(O)=0$, $F(A)=3$, $F(B)=2$. Lớn nhất là $3$.`},
+{c:2,t:"sa",lv:3,q:R`Tìm giá trị lớn nhất của $F=x+y$ trên miền nghiệm của hệ $x\ge0,\ y\ge0,\ x+2y\le6,\ 2x+y\le6$.`,a:"4",e:R`Các đỉnh: $(0;0),(3;0),(2;2),(0;3)$ cho $F=0;3;4;3$. Lớn nhất là $4$.`},
+{c:2,t:"sa",lv:3,q:R`Miền nghiệm của hệ $0\le x\le4,\ 0\le y\le3,\ x+y\le5$ là một đa giác. Tính diện tích đa giác đó.`,a:"10",e:R`Hình chữ nhật $4\times3$ có diện tích $12$; bị cắt đi tam giác vuông cân có hai cạnh góc vuông bằng $2$ (diện tích $2$) ở góc $(4;3)$. Diện tích còn lại $12-2=10$.`},
+{c:2,t:"sa",lv:3,q:"Một nông dân trồng ngô và đậu trên tổng diện tích không quá 10 ha, trong đó ngô không quá 6 ha và đậu ít nhất 2 ha. Mỗi ha ngô lãi 8 triệu đồng, mỗi ha đậu lãi 6 triệu đồng. Tìm lãi lớn nhất (đơn vị: triệu đồng).",a:"72",e:R`Gọi $x,y$ là số ha ngô, đậu: $x\ge0$, $x\le6$, $y\ge2$, $x+y\le10$; $F=8x+6y$. Các đỉnh $(0;2),(6;2),(6;4),(0;10)$ cho $F=12;60;72;60$. Lớn nhất là $72$ triệu đồng.`},
+{c:3,t:"mc",lv:1,q:R`Giá trị của $\sin 150^\circ$ bằng`,o:[R`$\dfrac12$`,R`$\dfrac{\sqrt3}{2}$`,R`$-\dfrac12$`,R`$-\dfrac{\sqrt3}{2}$`],a:0,e:R`Hai góc bù nhau có sin bằng nhau: $\sin150^\circ=\sin(180^\circ-30^\circ)=\sin30^\circ=\dfrac12$.`},
+{c:3,t:"mc",lv:1,q:R`Trong tam giác $ABC$ với $a=BC$, $b=CA$, $c=AB$, định lí côsin phát biểu rằng $a^2$ bằng`,o:[R`$b^2+c^2-2bc\cos A$`,R`$b^2+c^2+2bc\cos A$`,R`$b^2+c^2-2bc\sin A$`,R`$b^2+c^2-bc\cos A$`],a:0,e:R`Định lí côsin: $a^2=b^2+c^2-2bc\cos A$.`},
+{c:3,t:"mc",lv:2,q:R`Tam giác $ABC$ có $AB=3$, $AC=4$, $\widehat{A}=60^\circ$. Độ dài cạnh $BC$ bằng`,o:[R`$\sqrt{13}$`,R`$\sqrt{37}$`,R`$13$`,R`$5$`],a:0,e:R`$BC^2=3^2+4^2-2\cdot3\cdot4\cos60^\circ=25-12=13$, nên $BC=\sqrt{13}$.`},
+{c:3,t:"mc",lv:3,q:R`Tam giác $ABC$ có ba cạnh $a=13$, $b=14$, $c=15$. Diện tích tam giác bằng`,o:[R`$84$`,R`$42$`,R`$90$`,R`$168$`],a:0,e:R`$p=\dfrac{13+14+15}{2}=21$. Theo công thức Heron, $S=\sqrt{21\cdot8\cdot7\cdot6}=\sqrt{7056}=84$.`},
+{c:3,t:"tf",lv:1,q:"Về giá trị lượng giác của các góc từ $0^\\circ$ đến $180^\\circ$, chọn Đúng hoặc Sai cho mỗi ý.",s:[
+ {x:R`$\sin120^\circ=\dfrac{\sqrt3}{2}$`,a:true,e:R`$\sin120^\circ=\sin(180^\circ-60^\circ)=\sin60^\circ=\dfrac{\sqrt3}{2}$.`},
+ {x:R`$\cos120^\circ=\dfrac12$`,a:false,e:R`$\cos120^\circ=-\cos60^\circ=-\dfrac12$.`},
+ {x:R`$\tan135^\circ=-1$`,a:true,e:R`$\tan135^\circ=\dfrac{\sin135^\circ}{\cos135^\circ}=\dfrac{\sqrt2/2}{-\sqrt2/2}=-1$.`},
+ {x:R`$\sin60^\circ=\sin120^\circ$`,a:true,e:R`Hai góc bù nhau có sin bằng nhau.`}]},
+{c:3,t:"tf",lv:2,q:R`Tam giác $ABC$ vuông tại $B$ có $a=BC=10$ và $\widehat{A}=30^\circ$. Chọn Đúng hoặc Sai cho mỗi ý.`,s:[
+ {x:R`Bán kính đường tròn ngoại tiếp $R=5$.`,a:false,e:R`$R=\dfrac{a}{2\sin A}=\dfrac{10}{2\cdot\frac12}=10$.`},
+ {x:R`Cạnh $b=AC=20$.`,a:true,e:R`$b=2R\sin B=2\cdot10\cdot\sin90^\circ=20$.`},
+ {x:R`Cạnh $c=AB=10\sqrt3$.`,a:true,e:R`$\widehat{C}=60^\circ$, $c=2R\sin C=20\cdot\dfrac{\sqrt3}{2}=10\sqrt3$.`},
+ {x:R`Diện tích tam giác bằng $100\sqrt3$.`,a:false,e:R`$S=\dfrac12\cdot BC\cdot AB=\dfrac12\cdot10\cdot10\sqrt3=50\sqrt3$.`}]},
+{c:3,t:"tf",lv:3,q:R`Tam giác $ABC$ có $a=7$, $b=8$, $c=5$. Chọn Đúng hoặc Sai cho mỗi ý.`,s:[
+ {x:R`$\cos A=\dfrac12$.`,a:true,e:R`$\cos A=\dfrac{8^2+5^2-7^2}{2\cdot8\cdot5}=\dfrac{40}{80}=\dfrac12$.`},
+ {x:R`$\widehat{A}=60^\circ$.`,a:true,e:R`$\cos A=\dfrac12$ nên $\widehat{A}=60^\circ$.`},
+ {x:R`Diện tích $S=20\sqrt3$.`,a:false,e:R`$S=\dfrac12bc\sin A=\dfrac12\cdot8\cdot5\cdot\dfrac{\sqrt3}{2}=10\sqrt3$.`},
+ {x:R`Bán kính đường tròn ngoại tiếp $R=\dfrac{7\sqrt3}{3}$.`,a:true,e:R`$R=\dfrac{a}{2\sin A}=\dfrac{7}{\sqrt3}=\dfrac{7\sqrt3}{3}$.`}]},
+{c:3,t:"sa",lv:2,q:R`Tam giác $ABC$ có $AB=6$, $AC=8$, $\widehat{A}=30^\circ$. Tính diện tích tam giác.`,a:"12",e:R`$S=\dfrac12\cdot6\cdot8\cdot\sin30^\circ=\dfrac12\cdot6\cdot8\cdot\dfrac12=12$.`},
+{c:3,t:"sa",lv:3,q:R`Tam giác $ABC$ có $a=3$, $b=5$, $c=7$. Tính số đo (theo độ) của góc lớn nhất.`,a:"120",e:R`Góc lớn nhất đối diện cạnh lớn nhất $c=7$: $\cos C=\dfrac{9+25-49}{2\cdot3\cdot5}=-\dfrac12$, nên $C=120^\circ$.`},
+{c:3,t:"sa",lv:3,q:R`Tam giác có ba cạnh $5$, $12$, $13$. Tính bán kính đường tròn nội tiếp tam giác.`,a:"2",e:R`$p=15$, $S=\sqrt{15\cdot10\cdot3\cdot2}=30$. Từ $S=pr$ suy ra $r=\dfrac{30}{15}=2$.`},
+{c:3,t:"mc",lv:1,q:R`Giá trị của $\cos90^\circ$ bằng`,o:[R`$0$`,R`$1$`,R`$-1$`,R`$\dfrac12$`],a:0,e:R`Điểm ứng với góc $90^\circ$ trên nửa đường tròn đơn vị là $(0;1)$ nên $\cos90^\circ=0$.`},
+{c:3,t:"mc",lv:1,q:R`Trong tam giác $ABC$ nội tiếp đường tròn bán kính $R$, tỉ số $\dfrac{a}{\sin A}$ bằng`,o:[R`$2R$`,R`$R$`,R`$\dfrac{R}{2}$`,R`$4R$`],a:0,e:R`Định lí sin: $\dfrac{a}{\sin A}=\dfrac{b}{\sin B}=\dfrac{c}{\sin C}=2R$.`},
+{c:3,t:"mc",lv:1,q:R`Công thức nào sau đây dùng để tính diện tích tam giác $ABC$?`,o:[R`$S=\dfrac12ab\sin C$`,R`$S=\dfrac12ab\cos C$`,R`$S=ab\sin C$`,R`$S=\dfrac12ab\sin A$`],a:0,e:R`Diện tích bằng một nửa tích hai cạnh nhân sin của góc xen giữa hai cạnh đó: $S=\dfrac12ab\sin C$.`},
+{c:3,t:"mc",lv:2,q:R`Giá trị của biểu thức $\sin30^\circ+\cos120^\circ$ bằng`,o:[R`$0$`,R`$1$`,R`$-1$`,R`$\dfrac12$`],a:0,e:R`$\sin30^\circ=\dfrac12$, $\cos120^\circ=-\cos60^\circ=-\dfrac12$. Tổng bằng $0$.`},
+{c:3,t:"mc",lv:2,q:R`Tam giác $ABC$ có $a=BC=6$ và $\widehat{A}=30^\circ$. Bán kính đường tròn ngoại tiếp tam giác bằng`,o:[R`$6$`,R`$3$`,R`$12$`,R`$6\sqrt3$`],a:0,e:R`$R=\dfrac{a}{2\sin A}=\dfrac{6}{2\cdot\frac12}=6$.`},
+{c:3,t:"mc",lv:2,q:R`Tam giác $ABC$ có $a=5$, $b=6$, $c=7$. Giá trị của $\cos A$ bằng`,o:[R`$\dfrac57$`,R`$\dfrac{19}{35}$`,R`$\dfrac15$`,R`$\dfrac37$`],a:0,e:R`$\cos A=\dfrac{b^2+c^2-a^2}{2bc}=\dfrac{36+49-25}{84}=\dfrac{60}{84}=\dfrac57$. ($\dfrac{19}{35}$ là $\cos B$.)`},
+{c:3,t:"mc",lv:3,q:R`Tam giác $ABC$ có $AB=5$, $AC=8$, $\widehat{A}=60^\circ$. Bán kính đường tròn ngoại tiếp tam giác bằng`,o:[R`$\dfrac{7\sqrt3}{3}$`,R`$7\sqrt3$`,R`$\dfrac72$`,R`$\dfrac{7\sqrt3}{6}$`],a:0,e:R`$BC^2=25+64-2\cdot5\cdot8\cdot\dfrac12=49$ nên $BC=7$. $R=\dfrac{BC}{2\sin60^\circ}=\dfrac{7}{\sqrt3}=\dfrac{7\sqrt3}{3}$.`},
+{c:3,t:"tf",lv:1,q:"Về giá trị lượng giác của một số góc đặc biệt, chọn Đúng hoặc Sai cho mỗi ý.",s:[
+ {x:R`$\cos0^\circ=1$`,a:true,e:R`Điểm ứng với góc $0^\circ$ là $(1;0)$.`},
+ {x:R`$\sin90^\circ=1$`,a:true,e:R`Điểm ứng với góc $90^\circ$ là $(0;1)$.`},
+ {x:R`$\cos180^\circ=1$`,a:false,e:R`$\cos180^\circ=-1$.`},
+ {x:R`$\tan90^\circ=0$`,a:false,e:R`$\tan90^\circ$ không xác định.`}]},
+{c:3,t:"tf",lv:1,q:"Về các công thức lượng giác, chọn Đúng hoặc Sai cho mỗi ý.",s:[
+ {x:R`$a^2=b^2+c^2-2bc\cos A$`,a:true,e:R`Đây là định lí côsin.`},
+ {x:R`$\sin^2\alpha+\cos^2\alpha=1$`,a:true,e:R`Đúng với mọi góc $\alpha$.`},
+ {x:R`$\sin(180^\circ-\alpha)=-\sin\alpha$`,a:false,e:R`Hai góc bù nhau có sin bằng nhau: $\sin(180^\circ-\alpha)=\sin\alpha$.`},
+ {x:R`$\cos(180^\circ-\alpha)=-\cos\alpha$`,a:true,e:R`Hai góc bù nhau có côsin đối nhau.`}]},
+{c:3,t:"tf",lv:2,q:R`Tam giác $ABC$ có $a=7$, $b=8$, $c=9$. Chọn Đúng hoặc Sai cho mỗi ý.`,s:[
+ {x:R`$\cos A=\dfrac23$`,a:true,e:R`$\cos A=\dfrac{64+81-49}{2\cdot8\cdot9}=\dfrac{96}{144}=\dfrac23$.`},
+ {x:R`Góc $A$ là góc nhọn.`,a:true,e:R`$\cos A>0$.`},
+ {x:R`$\cos C=\dfrac37$`,a:false,e:R`$\cos C=\dfrac{49+64-81}{2\cdot7\cdot8}=\dfrac{32}{112}=\dfrac27$.`},
+ {x:R`Tam giác $ABC$ có một góc tù.`,a:false,e:R`Góc lớn nhất đối diện cạnh lớn nhất $c=9$ có $\cos C=\dfrac27>0$ nên cả ba góc đều nhọn.`}]},
+{c:3,t:"tf",lv:2,q:R`Tam giác $ABC$ có $\widehat{A}=45^\circ$, $\widehat{B}=60^\circ$ và $a=\sqrt2$. Chọn Đúng hoặc Sai cho mỗi ý.`,s:[
+ {x:R`$\widehat{C}=75^\circ$`,a:true,e:R`$180^\circ-45^\circ-60^\circ=75^\circ$.`},
+ {x:R`Bán kính đường tròn ngoại tiếp $R=1$.`,a:true,e:R`$R=\dfrac{a}{2\sin A}=\dfrac{\sqrt2}{2\cdot\frac{\sqrt2}{2}}=1$.`},
+ {x:R`$b=\sqrt3$`,a:true,e:R`$b=2R\sin B=2\cdot\dfrac{\sqrt3}{2}=\sqrt3$.`},
+ {x:R`$b=\sqrt2$`,a:false,e:R`$b=\sqrt3$, không phải $\sqrt2$.`}]},
+{c:3,t:"tf",lv:3,q:R`Tam giác $ABC$ có ba cạnh $7$, $8$, $9$. Chọn Đúng hoặc Sai cho mỗi ý.`,s:[
+ {x:R`Nửa chu vi $p=12$.`,a:true,e:R`$p=\dfrac{7+8+9}{2}=12$.`},
+ {x:R`Diện tích $S=12\sqrt5$.`,a:true,e:R`$S=\sqrt{12\cdot5\cdot4\cdot3}=\sqrt{720}=12\sqrt5$.`},
+ {x:R`Bán kính đường tròn nội tiếp $r=\sqrt5$.`,a:true,e:R`$r=\dfrac Sp=\dfrac{12\sqrt5}{12}=\sqrt5$.`},
+ {x:R`Bán kính đường tròn ngoại tiếp $R=7$.`,a:false,e:R`$R=\dfrac{abc}{4S}=\dfrac{504}{48\sqrt5}=\dfrac{21\sqrt5}{10}$.`}]},
+{c:3,t:"tf",lv:3,q:R`Hai điểm $A$, $B$ cách nhau $100$ m. Từ $A$ và $B$ cùng nhìn một cây $C$ với $\widehat{CAB}=\widehat{CBA}=30^\circ$. Chọn Đúng hoặc Sai cho mỗi ý.`,s:[
+ {x:R`$\widehat{ACB}=120^\circ$.`,a:true,e:R`$180^\circ-30^\circ-30^\circ=120^\circ$.`},
+ {x:R`$CA=CB$.`,a:true,e:R`Tam giác có hai góc ở đáy bằng nhau nên cân tại $C$.`},
+ {x:R`$CA=\dfrac{100\sqrt3}{3}$ m.`,a:true,e:R`$\dfrac{CA}{\sin30^\circ}=\dfrac{100}{\sin120^\circ}\Rightarrow CA=\dfrac{100\cdot\frac12}{\frac{\sqrt3}{2}}=\dfrac{100\sqrt3}{3}$.`},
+ {x:R`Khoảng cách từ $C$ đến đường thẳng $AB$ bằng $50$ m.`,a:false,e:R`Khoảng cách là $CA\sin30^\circ=\dfrac{100\sqrt3}{6}\approx28{,}9$ m.`}]},
+{c:3,t:"sa",lv:1,q:R`Tính giá trị của biểu thức $2\sin30^\circ+\cos0^\circ$.`,a:"2",e:R`$2\cdot\dfrac12+1=2$.`},
+{c:3,t:"sa",lv:1,q:R`Tam giác $ABC$ có $\widehat{A}=50^\circ$ và $\widehat{B}=60^\circ$. Tính số đo (theo độ) của $\widehat{C}$.`,a:"70",e:R`$180^\circ-50^\circ-60^\circ=70^\circ$.`},
+{c:3,t:"sa",lv:2,q:R`Tam giác $ABC$ có $a=BC=5$ và $\widehat{A}=30^\circ$. Tính bán kính đường tròn ngoại tiếp.`,a:"5",e:R`$R=\dfrac{a}{2\sin A}=\dfrac{5}{2\cdot\frac12}=5$.`},
+{c:3,t:"sa",lv:2,q:R`Tam giác $ABC$ có $b=7$, $c=5$ và $\cos A=\dfrac17$. Tính độ dài cạnh $a$.`,a:"8",e:R`$a^2=49+25-2\cdot7\cdot5\cdot\dfrac17=74-10=64$, nên $a=8$.`},
+{c:3,t:"sa",lv:2,q:R`Tam giác có ba cạnh $6$, $8$, $10$. Tính diện tích tam giác.`,a:"24",e:R`$p=12$, $S=\sqrt{12\cdot6\cdot4\cdot2}=\sqrt{576}=24$.`},
+{c:3,t:"sa",lv:3,q:R`Tam giác $ABC$ có $AB=4$, $AC=6$, diện tích $S=6\sqrt3$ và $\widehat{A}$ là góc nhọn. Tính số đo (theo độ) của $\widehat{A}$.`,a:"60",e:R`$S=\dfrac12\cdot4\cdot6\cdot\sin A=12\sin A=6\sqrt3\Rightarrow\sin A=\dfrac{\sqrt3}{2}$. Vì $A$ nhọn nên $A=60^\circ$.`},
+{c:3,t:"sa",lv:3,q:R`Tam giác $ABC$ có ba cạnh $13$, $14$, $15$. Tính độ dài đường cao ứng với cạnh dài $14$.`,a:"12",e:R`Diện tích $S=84$. Đường cao $h=\dfrac{2S}{14}=\dfrac{168}{14}=12$.`},
+{c:4,t:"mc",lv:1,q:R`Cho hình bình hành $ABCD$. Vectơ nào sau đây bằng vectơ $\overrightarrow{AB}$?`,o:[R`$\overrightarrow{DC}$`,R`$\overrightarrow{CD}$`,R`$\overrightarrow{BC}$`,R`$\overrightarrow{DA}$`],a:0,e:R`Hình bình hành có $AB\parallel DC$ và $AB=DC$, hai vectơ $\overrightarrow{AB}$ và $\overrightarrow{DC}$ cùng hướng nên bằng nhau. $\overrightarrow{CD}$ ngược hướng với $\overrightarrow{AB}$.`},
+{c:4,t:"mc",lv:1,q:R`Với ba điểm $A,B,C$ bất kì, $\overrightarrow{AB}+\overrightarrow{BC}$ bằng`,o:[R`$\overrightarrow{AC}$`,R`$\overrightarrow{CA}$`,R`$\overrightarrow{BA}$`,R`$\overrightarrow{CB}$`],a:0,e:R`Đây là quy tắc ba điểm.`},
+{c:4,t:"mc",lv:2,q:R`Cho $A(1;2)$ và $B(4;6)$. Tọa độ vectơ $\overrightarrow{AB}$ là`,o:[R`$(3;4)$`,R`$(5;8)$`,R`$(-3;-4)$`,R`$(3;-4)$`],a:0,e:R`$\overrightarrow{AB}=(4-1;\ 6-2)=(3;4)$.`},
+{c:4,t:"mc",lv:3,q:R`Cho tam giác $ABC$ có trọng tâm $G$ và $M$ là điểm bất kì. Khi đó $\overrightarrow{MA}+\overrightarrow{MB}+\overrightarrow{MC}$ bằng`,o:[R`$3\overrightarrow{MG}$`,R`$\overrightarrow{MG}$`,R`$2\overrightarrow{MG}$`,R`$\vec 0$`],a:0,e:R`Viết $\overrightarrow{MA}=\overrightarrow{MG}+\overrightarrow{GA}$ (tương tự cho $B,C$) rồi cộng lại, dùng $\overrightarrow{GA}+\overrightarrow{GB}+\overrightarrow{GC}=\vec 0$, ta được $3\overrightarrow{MG}$.`},
+{c:4,t:"tf",lv:1,q:"Về khái niệm vectơ, chọn Đúng hoặc Sai cho mỗi ý.",s:[
+ {x:R`Vectơ-không cùng phương với mọi vectơ.`,a:true,e:R`Theo quy ước, $\vec 0$ cùng phương, cùng hướng với mọi vectơ.`},
+ {x:R`Hai vectơ bằng nhau thì có cùng độ dài.`,a:true,e:R`Hai vectơ bằng nhau là hai vectơ cùng hướng và cùng độ dài.`},
+ {x:R`Hai vectơ cùng phương thì bằng nhau.`,a:false,e:R`Cùng phương chưa chắc cùng hướng, độ dài cũng có thể khác nhau.`},
+ {x:R`$|\overrightarrow{AB}|=AB$.`,a:true,e:R`Độ dài vectơ $\overrightarrow{AB}$ là độ dài đoạn thẳng $AB$.`}]},
+{c:4,t:"tf",lv:2,q:R`Cho $\vec a=(2;-1)$ và $\vec b=(1;3)$. Chọn Đúng hoặc Sai cho mỗi ý.`,s:[
+ {x:R`$\vec a+\vec b=(3;2)$`,a:true,e:R`$(2+1;\ -1+3)=(3;2)$.`},
+ {x:R`$\vec a-\vec b=(1;4)$`,a:false,e:R`$\vec a-\vec b=(2-1;\ -1-3)=(1;-4)$.`},
+ {x:R`$2\vec a=(4;-2)$`,a:true,e:R`Nhân từng tọa độ với $2$.`},
+ {x:R`$|\vec a|=\sqrt5$`,a:true,e:R`$|\vec a|=\sqrt{2^2+(-1)^2}=\sqrt5$.`}]},
+{c:4,t:"tf",lv:3,q:R`Cho tam giác $ABC$ có $A(0;0)$, $B(4;0)$, $C(0;3)$. Chọn Đúng hoặc Sai cho mỗi ý.`,s:[
+ {x:R`$\overrightarrow{BC}=(-4;3)$`,a:true,e:R`$(0-4;\ 3-0)=(-4;3)$.`},
+ {x:R`$BC=5$`,a:true,e:R`$BC=\sqrt{(-4)^2+3^2}=5$.`},
+ {x:R`Trung điểm của $BC$ có tọa độ $(2;1)$.`,a:false,e:R`Trung điểm là $\left(\dfrac{4+0}{2};\dfrac{0+3}{2}\right)=\left(2;\dfrac32\right)$.`},
+ {x:R`Tam giác $ABC$ vuông tại $A$.`,a:true,e:R`$\overrightarrow{AB}\cdot\overrightarrow{AC}=4\cdot0+0\cdot3=0$ nên $AB\perp AC$.`}]},
+{c:4,t:"sa",lv:2,q:R`Cho $\vec a=(1;2)$ và $\vec b=(3;-1)$. Tính $\vec a\cdot\vec b$.`,a:"1",e:R`$\vec a\cdot\vec b=1\cdot3+2\cdot(-1)=1$.`},
+{c:4,t:"sa",lv:3,q:R`Cho $\vec a=(m;4)$ và $\vec b=(2;-1)$. Tìm $m$ để $\vec a\perp\vec b$.`,a:"2",e:R`$\vec a\perp\vec b\iff\vec a\cdot\vec b=0\iff 2m-4=0\iff m=2$.`},
+{c:4,t:"sa",lv:3,q:R`Cho hình bình hành $ABCD$ có $A(0;0)$, $B(4;1)$, $C(6;5)$. Tính tổng hoành độ và tung độ của điểm $D$.`,a:"6",e:R`$ABCD$ là hình bình hành nên $\overrightarrow{AD}=\overrightarrow{BC}=(2;4)$, suy ra $D(2;4)$. Tổng là $6$.`},
+{c:4,t:"mc",lv:1,q:R`Độ dài của vectơ $\overrightarrow{AB}$ bằng`,o:[R`độ dài đoạn thẳng $AB$`,R`hai lần độ dài đoạn thẳng $AB$`,R`$0$`,R`một nửa độ dài đoạn thẳng $AB$`],a:0,e:R`Theo định nghĩa, $|\overrightarrow{AB}|=AB$.`},
+{c:4,t:"mc",lv:1,q:R`Vectơ đối của vectơ $\overrightarrow{AB}$ là`,o:[R`$\overrightarrow{BA}$`,R`$\overrightarrow{AB}$`,R`$\vec 0$`,R`$2\overrightarrow{AB}$`],a:0,e:R`Vectơ đối của $\overrightarrow{AB}$ có cùng độ dài và ngược hướng, đó là $\overrightarrow{BA}$.`},
+{c:4,t:"mc",lv:1,q:R`Với ba điểm $O,A,B$ bất kì, $\overrightarrow{OA}-\overrightarrow{OB}$ bằng`,o:[R`$\overrightarrow{BA}$`,R`$\overrightarrow{AB}$`,R`$\overrightarrow{AO}$`,R`$\vec 0$`],a:0,e:R`Quy tắc hiệu: $\overrightarrow{OA}-\overrightarrow{OB}=\overrightarrow{BA}$.`},
+{c:4,t:"mc",lv:2,q:R`Cho $I$ là trung điểm của đoạn thẳng $AB$. Đẳng thức nào sau đây đúng?`,o:[R`$\overrightarrow{IA}+\overrightarrow{IB}=\vec 0$`,R`$\overrightarrow{IA}=\overrightarrow{IB}$`,R`$\overrightarrow{AI}=2\overrightarrow{AB}$`,R`$\overrightarrow{AB}=\overrightarrow{AI}$`],a:0,e:R`$\overrightarrow{IA}$ và $\overrightarrow{IB}$ là hai vectơ đối nhau nên tổng bằng $\vec 0$. Hai vectơ $\overrightarrow{IA},\overrightarrow{IB}$ ngược hướng nên không bằng nhau; $\overrightarrow{AI}=\dfrac12\overrightarrow{AB}$.`},
+{c:4,t:"mc",lv:2,q:R`Cho $\vec a=(3;-2)$ và $\vec b=(-1;4)$. Tọa độ của $\vec a+2\vec b$ là`,o:[R`$(1;6)$`,R`$(5;-10)$`,R`$(-1;10)$`,R`$(2;2)$`],a:0,e:R`$2\vec b=(-2;8)$, nên $\vec a+2\vec b=(3-2;\ -2+8)=(1;6)$.`},
+{c:4,t:"mc",lv:2,q:R`Độ dài của vectơ $\vec a=(6;-8)$ bằng`,o:[R`$10$`,R`$14$`,R`$2$`,R`$100$`],a:0,e:R`$|\vec a|=\sqrt{6^2+(-8)^2}=\sqrt{100}=10$.`},
+{c:4,t:"mc",lv:3,q:R`Cho $\vec a=(1;2)$ và $\vec b=(m;3)$. Hai vectơ cùng phương khi $m$ bằng`,o:[R`$\dfrac32$`,R`$\dfrac23$`,R`$6$`,R`$-\dfrac32$`],a:0,e:R`$\vec a,\vec b$ cùng phương $\iff 1\cdot3-2\cdot m=0\iff m=\dfrac32$.`},
+{c:4,t:"tf",lv:1,q:"Về tổng và hiệu của hai vectơ, chọn Đúng hoặc Sai cho mỗi ý.",s:[
+ {x:R`$\overrightarrow{AB}+\overrightarrow{BC}=\overrightarrow{AC}$`,a:true,e:R`Quy tắc ba điểm.`},
+ {x:R`$\overrightarrow{AB}-\overrightarrow{AC}=\overrightarrow{BC}$`,a:false,e:R`$\overrightarrow{AB}-\overrightarrow{AC}=\overrightarrow{CB}$.`},
+ {x:R`Nếu $ABCD$ là hình bình hành thì $\overrightarrow{AB}=\overrightarrow{DC}$.`,a:true,e:R`Hai cạnh đối song song, bằng nhau và cùng hướng.`},
+ {x:R`$\vec a+(-\vec a)=\vec 0$`,a:true,e:R`Hai vectơ đối nhau có tổng bằng $\vec 0$.`}]},
+{c:4,t:"tf",lv:1,q:R`Cho $\vec a\ne\vec 0$. Chọn Đúng hoặc Sai cho mỗi ý.`,s:[
+ {x:R`$2\vec a$ cùng hướng với $\vec a$.`,a:true,e:R`Hệ số dương thì cùng hướng.`},
+ {x:R`$-3\vec a$ ngược hướng với $\vec a$.`,a:true,e:R`Hệ số âm thì ngược hướng.`},
+ {x:R`$|2\vec a|=2|\vec a|$`,a:true,e:R`$|k\vec a|=|k|\cdot|\vec a|$.`},
+ {x:R`$|-3\vec a|=-3|\vec a|$`,a:false,e:R`Độ dài không âm: $|-3\vec a|=3|\vec a|$.`}]},
+{c:4,t:"tf",lv:2,q:R`Cho $A(1;2)$, $B(3;6)$, $C(2;4)$. Chọn Đúng hoặc Sai cho mỗi ý.`,s:[
+ {x:R`$\overrightarrow{AB}=(2;4)$`,a:true,e:R`$(3-1;\ 6-2)=(2;4)$.`},
+ {x:R`$C$ là trung điểm của $AB$.`,a:true,e:R`Trung điểm của $AB$ là $\left(\dfrac{1+3}{2};\dfrac{2+6}{2}\right)=(2;4)$.`},
+ {x:R`Ba điểm $A,B,C$ thẳng hàng.`,a:true,e:R`Trung điểm của $AB$ nằm trên đường thẳng $AB$.`},
+ {x:R`$\overrightarrow{AC}=2\overrightarrow{AB}$`,a:false,e:R`$\overrightarrow{AC}=(1;2)=\dfrac12\overrightarrow{AB}$.`}]},
+{c:4,t:"tf",lv:2,q:R`Cho $\vec a=(1;-2)$, $\vec b=(4;-8)$ và $\vec c=(2;1)$. Chọn Đúng hoặc Sai cho mỗi ý.`,s:[
+ {x:R`$\vec b=4\vec a$`,a:true,e:R`$4\cdot(1;-2)=(4;-8)$.`},
+ {x:R`$\vec a$ và $\vec b$ cùng phương.`,a:true,e:R`Vì $\vec b=4\vec a$.`},
+ {x:R`$\vec a\cdot\vec c=0$`,a:true,e:R`$1\cdot2+(-2)\cdot1=0$.`},
+ {x:R`$\vec a\cdot\vec b=0$`,a:false,e:R`$1\cdot4+(-2)(-8)=20$.`}]},
+{c:4,t:"tf",lv:3,q:R`Cho tam giác $ABC$ có $A(1;1)$, $B(4;1)$, $C(1;5)$. Chọn Đúng hoặc Sai cho mỗi ý.`,s:[
+ {x:R`$AB=3$`,a:true,e:R`$\overrightarrow{AB}=(3;0)$.`},
+ {x:R`Tam giác $ABC$ vuông tại $A$.`,a:true,e:R`$\overrightarrow{AB}\cdot\overrightarrow{AC}=3\cdot0+0\cdot4=0$.`},
+ {x:R`$BC=5$`,a:true,e:R`$\overrightarrow{BC}=(-3;4)$, $BC=\sqrt{9+16}=5$.`},
+ {x:R`Trọng tâm tam giác là $G(2;2)$.`,a:false,e:R`$G=\left(\dfrac{1+4+1}{3};\dfrac{1+1+5}{3}\right)=\left(2;\dfrac73\right)$.`}]},
+{c:4,t:"tf",lv:3,q:R`Cho $\vec a=(1;1)$ và $\vec b=(-1;0)$. Chọn Đúng hoặc Sai cho mỗi ý.`,s:[
+ {x:R`$\vec a\cdot\vec b=-1$`,a:true,e:R`$1\cdot(-1)+1\cdot0=-1$.`},
+ {x:R`$|\vec a|=\sqrt2$`,a:true,e:R`$\sqrt{1+1}=\sqrt2$.`},
+ {x:R`$\cos(\vec a,\vec b)=-\dfrac{\sqrt2}{2}$`,a:true,e:R`$\dfrac{-1}{\sqrt2\cdot1}=-\dfrac{\sqrt2}{2}$.`},
+ {x:R`Góc giữa $\vec a$ và $\vec b$ bằng $45^\circ$.`,a:false,e:R`$\cos=-\dfrac{\sqrt2}{2}$ nên góc bằng $135^\circ$.`}]},
+{c:4,t:"sa",lv:1,q:R`Cho $\vec a=(3;4)$. Tính $|\vec a|$.`,a:"5",e:R`$|\vec a|=\sqrt{9+16}=5$.`},
+{c:4,t:"sa",lv:1,q:R`Cho hình bình hành $ABCD$ có $AB=3$. Tính độ dài vectơ $\overrightarrow{DC}$.`,a:"3",e:R`$\overrightarrow{DC}=\overrightarrow{AB}$ nên $|\overrightarrow{DC}|=AB=3$.`},
+{c:4,t:"sa",lv:2,q:R`Cho $A(2;-3)$ và $B(6;5)$. Gọi $I$ là trung điểm của $AB$. Tính tổng hoành độ và tung độ của $I$.`,a:"5",e:R`$I=\left(\dfrac{2+6}{2};\dfrac{-3+5}{2}\right)=(4;1)$. Tổng bằng $5$.`},
+{c:4,t:"sa",lv:2,q:R`Tam giác $ABC$ có $A(1;2)$, $B(5;6)$, $C(6;1)$ và trọng tâm $G$. Tính $x_G+y_G$.`,a:"7",e:R`$G=\left(\dfrac{1+5+6}{3};\dfrac{2+6+1}{3}\right)=(4;3)$. Tổng bằng $7$.`},
+{c:4,t:"sa",lv:2,q:R`Cho $\vec a=(2;-3)$ và $\vec b=(5;4)$. Tính $\vec a\cdot\vec b$.`,a:"-2",e:R`$2\cdot5+(-3)\cdot4=10-12=-2$.`},
+{c:4,t:"sa",lv:3,q:R`Cho $\vec a=(2;m)$ và $\vec b=(6;9)$. Tìm $m$ để hai vectơ cùng phương.`,a:"3",e:R`$2\cdot9-6\cdot m=0\iff m=3$.`},
+{c:4,t:"sa",lv:3,q:R`Tính số đo (theo độ) của góc giữa hai vectơ $\vec a=(1;0)$ và $\vec b=(1;\sqrt3)$.`,a:"60",e:R`$\cos(\vec a,\vec b)=\dfrac{1\cdot1+0}{1\cdot2}=\dfrac12$ nên góc bằng $60^\circ$.`},
+{c:5,t:"mc",lv:1,q:R`Mốt của mẫu số liệu $2;\ 3;\ 3;\ 5;\ 7;\ 3;\ 9$ là`,o:[R`$3$`,R`$5$`,R`$7$`,R`$2$`],a:0,e:R`Giá trị $3$ xuất hiện $3$ lần, nhiều nhất.`},
+{c:5,t:"mc",lv:1,q:R`Trung vị của mẫu số liệu $1;\ 3;\ 4;\ 8;\ 9$ là`,o:[R`$4$`,R`$5$`,R`$3$`,R`$8$`],a:0,e:R`Mẫu đã sắp xếp, có $5$ số nên trung vị là số ở giữa, bằng $4$. (Số $5$ là số trung bình, không phải trung vị.)`},
+{c:5,t:"mc",lv:2,q:R`Giá trị đúng là $\bar a=5$, giá trị gần đúng là $a=4{,}8$. Sai số tuyệt đối $\Delta_a$ bằng`,o:[R`$0{,}2$`,R`$0{,}04$`,R`$9{,}8$`,R`$0{,}1$`],a:0,e:R`$\Delta_a=|a-\bar a|=|4{,}8-5|=0{,}2$.`},
+{c:5,t:"mc",lv:2,q:R`Phương sai của mẫu số liệu $2;\ 4;\ 6;\ 8$ là`,o:[R`$5$`,R`$20$`,R`$2{,}5$`,R`$\sqrt5$`],a:0,e:R`$\bar x=5$; $s^2=\dfrac{(-3)^2+(-1)^2+1^2+3^2}{4}=\dfrac{20}{4}=5$. ($\sqrt5$ là độ lệch chuẩn.)`},
+{c:5,t:"tf",lv:1,q:R`Số đo chiều dài là $a=12{,}3$ (cm) với độ chính xác $d=0{,}05$. Chọn Đúng hoặc Sai cho mỗi ý.`,s:[
+ {x:R`Chiều dài đúng $\bar a$ nằm trong đoạn $[12{,}25;\ 12{,}35]$.`,a:true,e:R`$\bar a=12{,}3\pm0{,}05$.`},
+ {x:R`Sai số tuyệt đối $\Delta_a$ không vượt quá $0{,}05$.`,a:true,e:R`Đó là ý nghĩa của độ chính xác $d$.`},
+ {x:R`Có thể viết $\bar a=12{,}3\pm0{,}05$.`,a:true,e:R`Đúng cách viết số gần đúng kèm độ chính xác.`},
+ {x:R`Sai số tương đối của phép đo bằng $0{,}05$.`,a:false,e:R`Sai số tương đối $\delta_a\le\dfrac{0{,}05}{12{,}3}\approx0{,}4\%$, không phải $0{,}05$.`}]},
+{c:5,t:"tf",lv:2,q:R`Cho mẫu số liệu $3;\ 5;\ 5;\ 6;\ 7;\ 8;\ 9;\ 13$. Chọn Đúng hoặc Sai cho mỗi ý.`,s:[
+ {x:R`Số trung bình bằng $7$.`,a:true,e:R`Tổng bằng $56$, chia cho $8$ được $7$.`},
+ {x:R`Trung vị bằng $6$.`,a:false,e:R`$n=8$ chẵn nên trung vị là $\dfrac{6+7}{2}=6{,}5$.`},
+ {x:R`Mốt bằng $5$.`,a:true,e:R`$5$ xuất hiện $2$ lần, các số khác $1$ lần.`},
+ {x:R`Khoảng biến thiên bằng $10$.`,a:true,e:R`$R=13-3=10$.`}]},
+{c:5,t:"tf",lv:3,q:R`Cho mẫu số liệu $3;\ 5;\ 5;\ 6;\ 7;\ 8;\ 9;\ 13$ (trung vị $6{,}5$, số trung bình $7$). Chọn Đúng hoặc Sai cho mỗi ý.`,s:[
+ {x:R`$Q_1=5$.`,a:true,e:R`Nửa dưới $3;5;5;6$ có trung vị $\dfrac{5+5}{2}=5$.`},
+ {x:R`$Q_3=8{,}5$.`,a:true,e:R`Nửa trên $7;8;9;13$ có trung vị $\dfrac{8+9}{2}=8{,}5$.`},
+ {x:R`Mẫu có giá trị ngoại lệ là $13$.`,a:false,e:R`$\Delta_Q=3{,}5$, ngưỡng trên $Q_3+1{,}5\Delta_Q=13{,}75>13$ nên $13$ không phải ngoại lệ.`},
+ {x:R`Phương sai bằng $8{,}25$.`,a:true,e:R`Tổng bình phương độ lệch: $16+4+4+1+0+1+4+36=66$; $s^2=\dfrac{66}{8}=8{,}25$.`}]},
+{c:5,t:"sa",lv:2,q:R`Tìm trung vị của mẫu số liệu $7;\ 2;\ 9;\ 4;\ 4;\ 10$ (nhập số thập phân, dùng dấu phẩy hoặc dấu chấm).`,a:"5.5",e:R`Sắp xếp: $2;4;4;7;9;10$ ($n=6$), trung vị là $\dfrac{4+7}{2}=5{,}5$.`},
+{c:5,t:"sa",lv:3,q:R`Mẫu số liệu gồm bốn số $6;\ 8;\ x;\ 12$ có số trung bình bằng $9$. Tìm $x$.`,a:"10",e:R`$\dfrac{6+8+x+12}{4}=9\iff 26+x=36\iff x=10$.`},
+{c:5,t:"sa",lv:3,q:R`Tính độ lệch chuẩn của mẫu số liệu $1;\ 1;\ 5;\ 5$.`,a:"2",e:R`$\bar x=3$; $s^2=\dfrac{4+4+4+4}{4}=4$; $s=\sqrt4=2$.`},
+{c:5,t:"mc",lv:1,q:R`Số trung bình của mẫu số liệu $2;\ 4;\ 6;\ 8;\ 10$ là`,o:[R`$6$`,R`$5$`,R`$7$`,R`$30$`],a:0,e:R`$\bar x=\dfrac{2+4+6+8+10}{5}=\dfrac{30}{5}=6$.`},
+{c:5,t:"mc",lv:1,q:R`Khoảng biến thiên của mẫu số liệu $3;\ 9;\ 5;\ 12;\ 7$ là`,o:[R`$9$`,R`$12$`,R`$4$`,R`$3$`],a:0,e:R`$R=x_{\max}-x_{\min}=12-3=9$.`},
+{c:5,t:"mc",lv:1,q:R`Sai số tương đối $\delta_a$ của số gần đúng $a$ với sai số tuyệt đối $\Delta_a$ được tính bởi công thức`,o:[R`$\delta_a=\dfrac{\Delta_a}{|a|}$`,R`$\delta_a=\dfrac{|a|}{\Delta_a}$`,R`$\delta_a=\Delta_a\cdot|a|$`,R`$\delta_a=\Delta_a-|a|$`],a:0,e:R`Sai số tương đối là tỉ số giữa sai số tuyệt đối và giá trị tuyệt đối của số gần đúng.`},
+{c:5,t:"mc",lv:2,q:R`Cho mẫu số liệu $2;\ 4;\ 6;\ 8;\ 10;\ 12;\ 14$. Tứ phân vị thứ ba $Q_3$ bằng`,o:[R`$12$`,R`$10$`,R`$11$`,R`$14$`],a:0,e:R`$n=7$, $Q_2=8$. Nửa trên (không kể $Q_2$) là $10;12;14$ có trung vị $12$, nên $Q_3=12$.`},
+{c:5,t:"mc",lv:2,q:R`Quy tròn số $2{,}6475$ đến hàng phần trăm, ta được`,o:[R`$2{,}65$`,R`$2{,}64$`,R`$2{,}6$`,R`$2{,}7$`],a:0,e:R`Chữ số sau hàng phần trăm là $7\ge5$ nên tăng chữ số hàng phần trăm thêm $1$: $2{,}65$.`},
+{c:5,t:"mc",lv:2,q:R`Độ lệch chuẩn của mẫu số liệu $4;\ 4;\ 4;\ 4$ bằng`,o:[R`$0$`,R`$4$`,R`$16$`,R`$2$`],a:0,e:R`Mọi giá trị bằng số trung bình nên phương sai bằng $0$, độ lệch chuẩn bằng $0$.`},
+{c:5,t:"mc",lv:3,q:R`Mẫu số liệu $1;\ 2;\ 3;\ 4;\ 5;\ 6;\ 7;\ 8;\ 9;\ 30$ có giá trị ngoại lệ là`,o:[R`$30$`,R`$1$`,R`$9$`,"không có giá trị ngoại lệ."],a:0,e:R`$Q_1=3$, $Q_3=8$, $\Delta_Q=5$. Ngưỡng trên $Q_3+1{,}5\Delta_Q=15{,}5$. Vì $30>15{,}5$ nên $30$ là giá trị ngoại lệ.`},
+{c:5,t:"tf",lv:1,q:R`Cho mẫu số liệu $1;\ 2;\ 2;\ 3;\ 7$. Chọn Đúng hoặc Sai cho mỗi ý.`,s:[
+ {x:R`Số trung bình bằng $3$.`,a:true,e:R`Tổng bằng $15$, chia cho $5$ được $3$.`},
+ {x:R`Trung vị bằng $2$.`,a:true,e:R`Số ở giữa của mẫu đã sắp xếp là $2$.`},
+ {x:R`Mốt bằng $2$.`,a:true,e:R`$2$ xuất hiện nhiều nhất ($2$ lần).`},
+ {x:R`Khoảng biến thiên bằng $7$.`,a:false,e:R`$R=7-1=6$.`}]},
+{c:5,t:"tf",lv:1,q:"Về số gần đúng và sai số, chọn Đúng hoặc Sai cho mỗi ý.",s:[
+ {x:R`Sai số tuyệt đối là $\Delta_a=|a-\bar a|$.`,a:true,e:R`Đúng theo định nghĩa.`},
+ {x:R`Sai số tương đối là $\delta_a=\dfrac{\Delta_a}{|a|}$.`,a:true,e:R`Đúng theo định nghĩa.`},
+ {x:R`Quy tròn $5{,}36$ đến hàng phần mười được $5{,}3$.`,a:false,e:R`Chữ số sau là $6\ge5$ nên làm tròn lên: $5{,}4$.`},
+ {x:R`Viết $\bar a=a\pm d$ nghĩa là $\Delta_a\le d$.`,a:true,e:R`$d$ là độ chính xác của số gần đúng.`}]},
+{c:5,t:"tf",lv:2,q:R`Cho mẫu số liệu $2;\ 4;\ 4;\ 6;\ 9;\ 11$. Chọn Đúng hoặc Sai cho mỗi ý.`,s:[
+ {x:R`Số trung bình bằng $6$.`,a:true,e:R`Tổng bằng $36$, chia cho $6$ được $6$.`},
+ {x:R`Trung vị bằng $5$.`,a:true,e:R`$n=6$: $\dfrac{4+6}{2}=5$.`},
+ {x:R`$Q_1=4$.`,a:true,e:R`Nửa dưới $2;4;4$ có trung vị $4$.`},
+ {x:R`$Q_3=11$.`,a:false,e:R`Nửa trên $6;9;11$ có trung vị $9$, nên $Q_3=9$.`}]},
+{c:5,t:"tf",lv:2,q:R`Cho mẫu số liệu $1;\ 2;\ 3;\ 4;\ 100$. Chọn Đúng hoặc Sai cho mỗi ý.`,s:[
+ {x:R`Trung vị bằng $3$.`,a:true,e:R`Số ở giữa là $3$.`},
+ {x:R`Số trung bình bằng $22$.`,a:true,e:R`Tổng bằng $110$, chia cho $5$ được $22$.`},
+ {x:R`Trung vị ít bị ảnh hưởng bởi giá trị quá lớn $100$ hơn số trung bình.`,a:true,e:R`Số trung bình bị kéo lên $22$ còn trung vị vẫn là $3$.`},
+ {x:R`Khoảng biến thiên bằng $100$.`,a:false,e:R`$R=100-1=99$.`}]},
+{c:5,t:"tf",lv:3,q:R`Cho mẫu số liệu $2;\ 4;\ 4;\ 4;\ 5;\ 5;\ 7;\ 9$. Chọn Đúng hoặc Sai cho mỗi ý.`,s:[
+ {x:R`Số trung bình bằng $5$.`,a:true,e:R`Tổng bằng $40$, chia cho $8$ được $5$.`},
+ {x:R`Phương sai bằng $4$.`,a:true,e:R`Tổng bình phương độ lệch: $9+1+1+1+0+0+4+16=32$; $s^2=\dfrac{32}{8}=4$.`},
+ {x:R`Độ lệch chuẩn bằng $2$.`,a:true,e:R`$s=\sqrt4=2$.`},
+ {x:R`Khoảng biến thiên bằng $5$.`,a:false,e:R`$R=9-2=7$.`}]},
+{c:5,t:"tf",lv:3,q:R`Cho hai mẫu số liệu: $A$ gồm $4;\ 5;\ 6$ và $B$ gồm $1;\ 5;\ 9$. Chọn Đúng hoặc Sai cho mỗi ý.`,s:[
+ {x:R`Hai mẫu có cùng số trung bình.`,a:true,e:R`Cả hai đều có số trung bình bằng $5$.`},
+ {x:R`Mẫu $B$ phân tán hơn mẫu $A$.`,a:true,e:R`Phương sai của $B$ lớn hơn của $A$.`},
+ {x:R`Phương sai của mẫu $A$ bằng $\dfrac23$.`,a:true,e:R`$s_A^2=\dfrac{1+0+1}{3}=\dfrac23$.`},
+ {x:R`Độ lệch chuẩn của mẫu $B$ bằng $4$.`,a:false,e:R`$s_B^2=\dfrac{16+0+16}{3}=\dfrac{32}{3}$, $s_B\approx3{,}27$.`}]},
+{c:5,t:"sa",lv:1,q:R`Tìm mốt của mẫu số liệu $4;\ 7;\ 4;\ 9;\ 4;\ 7;\ 2$.`,a:"4",e:R`Giá trị $4$ xuất hiện $3$ lần, nhiều nhất.`},
+{c:5,t:"sa",lv:1,q:R`Tính số trung bình của mẫu số liệu $10;\ 12;\ 14;\ 16$.`,a:"13",e:R`$\dfrac{10+12+14+16}{4}=\dfrac{52}{4}=13$.`},
+{c:5,t:"sa",lv:2,q:R`Tìm trung vị của mẫu số liệu $12;\ 8;\ 5;\ 20;\ 9;\ 15$ (nhập số thập phân).`,a:"10.5",e:R`Sắp xếp: $5;8;9;12;15;20$, trung vị là $\dfrac{9+12}{2}=10{,}5$.`},
+{c:5,t:"sa",lv:2,q:R`Tính khoảng tứ phân vị của mẫu số liệu $2;\ 4;\ 6;\ 8;\ 10;\ 12;\ 14;\ 16$.`,a:"8",e:R`$Q_1=\dfrac{4+6}{2}=5$, $Q_3=\dfrac{12+14}{2}=13$, $\Delta_Q=13-5=8$.`},
+{c:5,t:"sa",lv:2,q:R`Tính phương sai của mẫu số liệu $1;\ 3;\ 5;\ 7;\ 9$.`,a:"8",e:R`$\bar x=5$; $s^2=\dfrac{16+4+0+4+16}{5}=8$.`},
+{c:5,t:"sa",lv:3,q:R`Bạn An đo cạnh một hình vuông được $12{,}0$ cm với sai số tuyệt đối không vượt quá $0{,}2$ cm. Chu vi lớn nhất có thể của hình vuông là bao nhiêu cm? (nhập số thập phân)`,a:"48.8",e:R`Cạnh lớn nhất là $12{,}0+0{,}2=12{,}2$ cm. Chu vi lớn nhất là $4\cdot12{,}2=48{,}8$ cm.`},
+{c:5,t:"sa",lv:3,q:R`Điểm trung bình của $20$ học sinh là $7$. Sau khi thêm điểm của một bạn nữa thì điểm trung bình của $21$ bạn là $7{,}1$. Tính điểm của bạn thêm vào (nhập số thập phân).`,a:"9.1",e:R`Tổng điểm $20$ bạn là $140$. Tổng điểm $21$ bạn là $21\cdot7{,}1=149{,}1$. Điểm của bạn thêm vào là $149{,}1-140=9{,}1$.`}
+];
+
+function $(s){return document.querySelector(s)}
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
+function BB(p){var m={N:"ℕ",Z:"ℤ",Q:"ℚ",R:"ℝ"};return p.replace(/\\mathbb\{?([NZQR])\}?/g,function(_,k){return " "+m[k]+" "})}
+function M(s){return s.split("$").map(function(p,i){
+  if(i%2===0)return esc(p);
+  p=BB(p);try{if(window.katex)return katex.renderToString(p,{output:"mathml",throwOnError:false,strict:false})}catch(e){}
+  return "<code>"+esc(p)+"</code>"}).join("")}
+function shuf(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a}
+function show(id){["home","quiz","res","join","wait","teach"].forEach(function(x){$("#"+x).hidden=x!==id});$("#nav").hidden=["home","join","teach"].indexOf(id)<0;Array.prototype.forEach.call(document.querySelectorAll("#nav button"),function(b){b.setAttribute("aria-pressed",String(b.dataset.v===id))});clearInterval(S.poll);window.scrollTo(0,0)}
+
+/* sơ đồ tư duy */
+function drawMap(id){var c=CH.filter(function(x){return x.id===id})[0];$("#root").textContent=c.name+". "+c.full;$("#map").innerHTML=MAPS[id].map(function(b,i){return "<details"+(i===0?" open":"")+"><summary>"+M(b[0])+"</summary><ul>"+b[1].map(function(l){return "<li>"+M(l)+"</li>"}).join("")+"</ul></details>"}).join("")}
+$("#mt").innerHTML=CH.filter(function(c){return c.on}).map(function(c){return '<label class="chip"><input type="radio" name="mp" value="'+c.id+'"'+(c.id===1?" checked":"")+'><span>'+c.name+"</span></label>"}).join("");
+$("#mt").onchange=function(e){drawMap(+e.target.value)};
+drawMap(1);
+
+/* chọn nội dung */
+$("#chs").innerHTML=CH.map(function(c){return '<label class="chip"><input type="checkbox" name="ch" value="'+c.id+'"'+(c.on?" checked":" disabled")+'><span>'+c.name+": "+esc(c.full)+(c.on?"":" (sắp có)")+"</span></label>"}).join("");
+$("#lvs").innerHTML=[1,2,3].map(function(k){return '<label class="chip"><input type="checkbox" name="lv" value="'+k+'" checked><span>'+LV[k]+"</span></label>"}).join("");
+function sel(name){return Array.prototype.map.call(document.querySelectorAll('input[name="'+name+'"]:checked'),function(x){return +x.value})}
+function pool(){var c=sel("ch"),l=sel("lv");return DATA.filter(function(q){return c.indexOf(q.c)>-1&&l.indexOf(q.lv)>-1})}
+function upd(){$("#nv").textContent=$("#n").value;var p=pool().length;$("#pool").textContent="Có "+p+" câu phù hợp với lựa chọn hiện tại."+(p<+$("#n").value&&p>0?" Bài làm sẽ có "+p+" câu.":"")}
+document.addEventListener("change",upd);$("#n").addEventListener("input",upd);upd();
+
+/* làm bài */
+var S={qs:[],i:0,cfg:null};
+function start(){
+  var p=pool(),err=$("#err");
+  if(!p.length){err.textContent="Chưa có câu hỏi phù hợp. Hãy chọn ít nhất một chương và một mức độ.";err.hidden=false;return}
+  err.hidden=true;
+  S.cfg=1;S.exam=null;clearInterval(S.tid);$("#tm").textContent="";
+  var n=Math.min(+$("#n").value,p.length);
+  S.qs=shuf(p).slice(0,n).map(function(q){
+    var o={q:q,ans:q.t==="tf"?q.s.map(function(){return null}):null};
+    if(q.t==="mc")o.perm=shuf(q.o.map(function(_,i){return i}));
+    return o});
+  S.i=0;render();show("quiz");$("#qh").focus();
+}
+function render(){
+  var it=S.qs[S.i],q=it.q,n=S.qs.length,h="";
+  $("#pb").style.width=((S.i+1)/n*100)+"%";
+  $("#pn").textContent="Câu "+(S.i+1)+" / "+n;
+  $("#un").textContent="Chưa trả lời: "+S.qs.filter(un).length;
+  $("#qh").innerHTML='<span class="tag">'+LV[q.lv]+"</span>"+{mc:"Trắc nghiệm 4 lựa chọn",tf:"Đúng / Sai",sa:"Trả lời ngắn"}[q.t];
+  h+='<p class="q">'+M(q.q)+"</p>";
+  if(q.t==="mc"){h+='<div role="radiogroup" aria-label="Các lựa chọn">'+it.perm.map(function(k,j){return '<label class="opt"><input type="radio" name="o" value="'+j+'"'+(it.ans===j?" checked":"")+"><span><b>"+"ABCD"[j]+".</b> "+M(q.o[k])+"</span></label>"}).join("")+"</div>"}
+  if(q.t==="tf"){h+=q.s.map(function(s,j){return '<fieldset class="tfi" style="margin:8px 0"><legend><b>'+"abcd"[j]+")</b> "+M(s.x)+'</legend><div class="row"><label class="opt"><input type="radio" name="t'+j+'" value="1"'+(it.ans[j]===true?" checked":"")+"> Đúng</label>"+'<label class="opt"><input type="radio" name="t'+j+'" value="0"'+(it.ans[j]===false?" checked":"")+"> Sai</label></div></fieldset>"}).join("")}
+  if(q.t==="sa"){h+='<label for="sa" class="note">Nhập đáp án là một số:</label><input class="sa" id="sa" type="text" inputmode="text" autocomplete="off" value="'+esc(it.ans||"")+'">'}
+  $("#qbox").innerHTML=h;
+  $("#qbox").onchange=function(e){var t=e.target;if(q.t==="mc")it.ans=+t.value;else if(q.t==="tf"){it.ans[+t.name.slice(1)]=t.value==="1"}upd2()};
+  var sa=$("#sa");if(sa)sa.oninput=function(){it.ans=sa.value;upd2()};
+  $("#prev").hidden=S.i===0;
+  $("#next").textContent=S.i===n-1?"Nộp bài":"Câu sau";
+}
+function un(it){var a=it.ans;return it.q.t==="tf"?a.some(function(x){return x===null}):(a===null||String(a).trim()==="")}
+function upd2(){$("#un").textContent="Chưa trả lời: "+S.qs.filter(un).length}
+function num(s){return parseFloat(String(s).trim().replace(",","."))}
+var TF=[0,0.1,0.25,0.5,1];
+function grade(it){var q=it.q;
+  if(q.t==="mc")return it.ans!==null&&it.perm[it.ans]===q.a?1:0;
+  if(q.t==="sa")return it.ans&&num(it.ans)===num(q.a)?1:0;
+  var c=0;q.s.forEach(function(s,j){if(it.ans[j]===s.a)c++});return TF[c]}
+function finish(){
+  var n=S.qs.length,tot=0,h="";
+  S.qs.forEach(function(it,i){var f=grade(it);tot+=f;var q=it.q;
+    var cls=f===1?"ok":(f>0?"mid":"bad"),st=f===1?"Đúng":(f>0?"Đúng một phần ("+f.toString().replace(".",",")+" điểm câu)":"Chưa đúng");
+    h+='<article class="rv '+cls+'"><div><span class="st">Câu '+(i+1)+": "+st+'</span> <span class="tag">'+LV[q.lv]+"</span></div><p class=\"q\">"+M(q.q)+"</p>";
+    if(q.t==="mc"){var ya=it.ans===null?"Bạn chưa chọn":"Bạn chọn: "+"ABCD"[it.ans]+". "+M(q.o[it.perm[it.ans]]);var ci=it.perm.indexOf(q.a);
+      h+='<div class="ans">'+ya+"<br>Đáp án đúng: <b>"+"ABCD"[ci]+".</b> "+M(q.o[q.a])+'</div><div class="exp">'+M(q.e)+"</div>"}
+    if(q.t==="sa"){h+='<div class="ans">Bạn trả lời: '+(it.ans?esc(it.ans):"chưa trả lời")+"<br>Đáp án đúng: <b>"+esc(q.a)+'</b></div><div class="exp">'+M(q.e)+"</div>"}
+    if(q.t==="tf"){q.s.forEach(function(s,j){var y=it.ans[j],ok=y===s.a;
+      h+='<div class="ans"><b>'+"abcd"[j]+")</b> "+M(s.x)+"<br>Bạn chọn: "+(y===null?"chưa chọn":y?"Đúng":"Sai")+" · Đáp án: <b>"+(s.a?"Đúng":"Sai")+"</b> "+(ok?"✔":"✘")+'<div class="exp">'+M(s.e)+"</div></div>"})}
+    h+="</article>"});
+  var d=Math.round(tot/n*100)/10;
+  $("#sc").textContent=String(d).replace(".",",")+" / 10";
+  $("#ss").textContent="Tổng điểm quy về thang 10, "+n+" câu, mỗi câu có trọng số bằng nhau.";
+  $("#rvs").innerHTML=h;S.d=d;if(S.exam){examDone(d)}else{$("#again").hidden=false;show("res");$("#rh").focus()}
+}
+$("#start").onclick=start;
+$("#prev").onclick=function(){S.i--;render();$("#qh").focus()};
+$("#next").onclick=function(){if(S.i===S.qs.length-1)finish();else{S.i++;render();$("#qh").focus()}};
+$("#again").onclick=start;
+$("#home2").onclick=function(){show("home")};
+var fz=100;function setfz(d){fz=Math.max(85,Math.min(150,fz+d));document.documentElement.style.fontSize=fz+"%"}
+$("#fm").onclick=function(){setfz(-10)};$("#fp").onclick=function(){setfz(10)};
+/* ===== Chế độ kiểm tra ===== */
+var API=""; /* Dán địa chỉ Web App của Google Apps Script vào giữa hai dấu ngoặc kép. Để trống = chế độ thử nghiệm. */
+function qid(q){var t=q.q+(q.s?q.s.map(function(x){return x.x}).join(""):""),h=5381;for(var i=0;i<t.length;i++)h=((h<<5)+h+t.charCodeAt(i))|0;return q.c+q.t[0]+(h>>>0).toString(36)}
+DATA.forEach(function(q){q.id=qid(q)});
+function norm(s){return String(s||"").trim().toUpperCase().replace(/\s+/g,"")}
+function mock(d){var db,r,o,nm=String(d.name||"").trim().toLowerCase();
+  try{db=JSON.parse(localStorage.getItem("mockdb"))||{}}catch(e){db={}}
+  r=db[d.room];
+  if(d.act==="create"){if(r&&r.pin!==d.pin)o={ok:false,msg:"Mã phòng đã tồn tại với PIN khác."};else{db[d.room]={pin:d.pin,cfg:d.cfg,st:"open",rows:[]};o={ok:true}}}
+  else if(!r)o={ok:false,msg:"Không tìm thấy phòng."};
+  else if(d.act==="cfg")o={ok:true,st:r.st,cfg:r.cfg,done:r.rows.some(function(x){return x.name.toLowerCase()===nm})};
+  else if(d.act==="submit"){
+    if(r.st!=="open")o={ok:false,msg:"Phòng đã đóng, không nhận bài nữa."};
+    else if(r.rows.some(function(x){return x.name.toLowerCase()===nm}))o={ok:false,msg:"Tên này đã nộp bài trong phòng."};
+    else{r.rows.push({name:String(d.name).trim().slice(0,40),score:+d.score,time:new Date().toLocaleTimeString("vi-VN")});o={ok:true}}}
+  else if(r.pin!==d.pin)o={ok:false,msg:"Sai mã PIN."};
+  else if(d.act==="list")o={ok:true,st:r.st,rows:r.rows};
+  else if(d.act==="close"){r.st="closed";o={ok:true}}
+  else if(d.act==="delete"){delete db[d.room];o={ok:true}}
+  else o={ok:false,msg:"Yêu cầu không hợp lệ."};
+  try{localStorage.setItem("mockdb",JSON.stringify(db))}catch(e){}
+  return o}
+function call(d){
+  if(!API)return Promise.resolve(mock(d));
+  return fetch(API,{method:"POST",body:JSON.stringify(d)}).then(function(r){return r.json()}).catch(function(){return {ok:false,msg:"Không kết nối được máy chủ. Hãy kiểm tra mạng và thử lại."}})}
+if(!API){$("#demo1").hidden=false;$("#demo2").hidden=false}
+Array.prototype.forEach.call(document.querySelectorAll("#nav button"),function(b){b.onclick=function(){show(b.dataset.v)}});
+$("#tch").innerHTML=CH.filter(function(c){return c.on}).map(function(c){return '<label class="chip"><input type="checkbox" name="tch" value="'+c.id+'" checked><span>'+c.name+": "+esc(c.full)+"</span></label>"}).join("");
+$("#tlv").innerHTML=[1,2,3].map(function(k){return '<label class="chip"><input type="checkbox" name="tlv" value="'+k+'" checked><span>'+LV[k]+"</span></label>"}).join("");
+
+/* học sinh */
+function mk(q){var o={q:q,ans:q.t==="tf"?q.s.map(function(){return null}):null};if(q.t==="mc")o.perm=shuf(q.o.map(function(_,i){return i}));return o}
+function tick(){var t=Math.round((S.end-Date.now())/1000);if(t<=0){clearInterval(S.tid);finish();return}$("#tm").textContent="Còn "+Math.floor(t/60)+":"+("0"+t%60).slice(-2)}
+$("#jgo").onclick=function(){
+  var nm=$("#jn").value.trim().replace(/\s+/g," "),rm=norm($("#jr").value),e=$("#je");
+  function bad(m){e.textContent=m;e.hidden=false}
+  if(!nm||!rm){bad("Hãy nhập họ tên và mã phòng.");return}
+  e.hidden=true;
+  call({act:"cfg",room:rm,name:nm}).then(function(o){
+    if(!o.ok)return bad(o.msg);
+    if(o.st!=="open")return bad("Phòng này đã đóng.");
+    if(o.done)return bad("Tên này đã nộp bài trong phòng.");
+    var qs=o.cfg.ids.map(function(id){return DATA.filter(function(q){return q.id===id})[0]}).filter(Boolean);
+    if(!qs.length)return bad("Đề của phòng không còn khớp với ngân hàng câu hỏi. Hãy báo giáo viên.");
+    S.exam={room:rm,name:nm};S.qs=qs.map(mk);S.i=0;
+    clearInterval(S.tid);$("#tm").textContent="";
+    if(o.cfg.min>0){S.end=Date.now()+o.cfg.min*60000;S.tid=setInterval(tick,1000);tick()}
+    render();show("quiz");$("#qh").focus()})};
+function examDone(d){clearInterval(S.tid);$("#tm").textContent="";show("wait");sendScore(d)}
+function sendScore(d){
+  $("#wh").textContent="Đang gửi bài…";$("#wm").textContent="";$("#retry").hidden=true;
+  call({act:"submit",room:S.exam.room,name:S.exam.name,score:d}).then(function(o){
+    if(o.ok){$("#wh").textContent="Đã nộp bài";$("#wm").textContent="Bài làm của bạn đã được gửi. Hãy chờ giáo viên kết thúc bài kiểm tra để xem điểm và lời giải. Đừng đóng trang này.";S.poll=setInterval(chk,8000);return}
+    if(/đã đóng|đã nộp/.test(o.msg)){$("#ss").textContent=o.msg+" Điểm này chưa được gửi cho giáo viên.";$("#again").hidden=true;show("res");return}
+    $("#wh").textContent="Chưa nộp được";$("#wm").textContent=o.msg;$("#retry").hidden=false})}
+$("#retry").onclick=function(){sendScore(S.d)};
+function chk(){call({act:"cfg",room:S.exam.room,name:S.exam.name}).then(function(o){
+  if(o.ok&&o.st!=="open"){$("#ss").textContent="Điểm của bạn đã được ghi nhận. Dưới đây là lời giải chi tiết.";$("#again").hidden=true;show("res");$("#rh").focus()}})}
+
+/* giáo viên */
+function tm(m){var e=$("#te");e.textContent=m||"";e.hidden=!m}
+function tauth(){return {room:norm($("#tr").value),pin:$("#tp").value.trim()}}
+$("#tcreate").onclick=function(){
+  var a=tauth(),c=sel("tch"),l=sel("tlv");
+  if(!a.room||a.pin.length<4)return tm("Hãy nhập mã phòng và PIN (ít nhất 4 ký tự).");
+  var p=DATA.filter(function(q){return c.indexOf(q.c)>-1&&l.indexOf(q.lv)>-1});
+  if(!p.length)return tm("Chưa có câu hỏi phù hợp. Hãy chọn ít nhất một chương và một mức độ.");
+  var n=Math.max(5,Math.min(20,Math.round(+$("#tn").value)||10)),m=Math.max(0,Math.min(120,Math.round(+$("#tmin").value)||0));
+  var ids=shuf(p).slice(0,n).map(function(q){return q.id});
+  call({act:"create",room:a.room,pin:a.pin,cfg:{ids:ids,min:m}}).then(function(o){
+    if(!o.ok)return tm(o.msg);
+    tm("");$("#tt").hidden=true;
+    $("#tst").textContent="Đã tạo phòng "+a.room+" gồm "+ids.length+" câu, "+(m?m+" phút":"không giới hạn thời gian")+". Hãy đưa mã phòng cho học sinh."})};
+function tlist(){var a=tauth();call({act:"list",room:a.room,pin:a.pin}).then(function(o){
+  if(!o.ok)return tm(o.msg);
+  tm("");
+  $("#tst").textContent="Phòng "+a.room+": "+(o.st==="open"?"đang mở":"đã kết thúc")+" · "+o.rows.length+" bài đã nộp.";
+  var r=o.rows.slice().sort(function(x,y){return y.score-x.score||(x.time>y.time?1:-1)});
+  $("#tb").innerHTML=r.map(function(x,i){return "<tr><td>"+(i+1)+"</td><td>"+esc(x.name)+"</td><td>"+String(x.score).replace(".",",")+"</td><td>"+esc(x.time)+"</td></tr>"}).join("");
+  $("#tt").hidden=false})}
+$("#tlist").onclick=function(){clearInterval(S.poll);tlist();S.poll=setInterval(tlist,10000)};
+function twice(id,fn){var b=$("#"+id),t0=b.textContent;b.onclick=function(){
+  if(b.dataset.arm){b.dataset.arm="";b.textContent=t0;fn()}
+  else{b.dataset.arm="1";b.textContent="Bấm lần nữa để xác nhận";setTimeout(function(){b.dataset.arm="";b.textContent=t0},5000)}}}
+twice("tclose",function(){var a=tauth();call({act:"close",room:a.room,pin:a.pin}).then(function(o){if(o.ok)tlist();else tm(o.msg)})});
+twice("tdel",function(){var a=tauth();call({act:"delete",room:a.room,pin:a.pin}).then(function(o){
+  if(o.ok){tm("");$("#tt").hidden=true;$("#tst").textContent="Đã xóa phòng "+a.room+" và toàn bộ kết quả."}else tm(o.msg)})});
+
+</script>
+</body>
+</html>
