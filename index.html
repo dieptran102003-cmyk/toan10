@@ -32,11 +32,29 @@ button,.btn{font:inherit;cursor:pointer}
 .root{display:inline-block;background:var(--blue);color:#fff;font-weight:800;padding:10px 16px;border-radius:14px;margin-bottom:10px}
 :root[data-theme="dark"] .root{color:#0f1730}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .root{color:#0f1730}}
-.tree{margin-left:14px;border-left:3px solid var(--blue);padding-left:14px}
-.tree details{margin:8px 0}
-.tree summary{cursor:pointer;font-weight:600;background:var(--blue-t);border-radius:10px;padding:9px 12px;min-height:44px;list-style-position:inside}
-.tree ul{margin:8px 0 4px;padding-left:22px}
-.tree li{margin:4px 0}
+.seg{display:flex;gap:6px;margin:4px 0 8px;flex-wrap:wrap}
+.seg button{flex:1;min-width:96px;min-height:44px;border:2px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);font-weight:600}
+.seg button[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:var(--bg)}
+.btabs{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-bottom:12px}
+.btabs button{display:flex;gap:8px;align-items:center;text-align:left;min-height:48px;padding:6px 10px;border:2px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);font-weight:600;font-size:.9rem;line-height:1.25}
+.btabs button i{font-style:normal;flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:var(--acc-t);color:var(--acc);font-weight:800;font-size:.85rem}
+.btabs button[aria-pressed=true]{border-color:var(--acc);background:var(--acc-t)}
+.kgrid{display:grid;gap:10px}
+@media (min-width:720px){.kgrid{grid-template-columns:1fr 1fr}}
+.kc{border:2px solid var(--line);border-left:6px solid var(--acc);border-radius:12px;padding:10px 12px;background:var(--card);overflow-wrap:anywhere}
+.kc.ct{background:var(--acc-t);font-size:1.05rem}
+.kc .tg{display:block;width:max-content;margin:0 0 5px}
+.a0{--acc:var(--blue);--acc-t:var(--blue-t)}.a1{--acc:var(--ok);--acc-t:var(--ok-t)}.a2{--acc:var(--mid);--acc-t:var(--mid-t)}.a3{--acc:var(--pur);--acc-t:var(--pur-t)}.a4{--acc:var(--bad);--acc-t:var(--bad-t)}
+:root{--pur:#6d3fc9;--pur-t:#efe8ff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--pur:#c4a8ff;--pur-t:#2f2352}}
+:root[data-theme="dark"]{--pur:#c4a8ff;--pur-t:#2f2352}
+.tg{display:inline-block;font-size:.76rem;font-weight:800;border-radius:6px;padding:1px 8px;white-space:nowrap}
+.tg.dn{background:var(--blue-t);color:var(--blue)}
+.tg.ct{background:var(--ok-t);color:var(--ok)}
+.tg.lt{background:var(--mid-t);color:var(--mid)}
+.tg.vd{background:var(--grid);color:var(--mute)}
+.tg.kl{background:var(--ink);color:var(--bg)}
+.tg.sl{background:var(--bad-t);color:var(--bad)}
 /* chọn */
 .chips{display:flex;flex-wrap:wrap;gap:8px}
 .chip{position:relative}
@@ -103,10 +121,17 @@ table{width:100%;border-collapse:collapse;margin-top:12px}th,td{text-align:left;
 
 <section id="home">
   <div class="panel">
-    <h2>Sơ đồ tư duy</h2>
-    <div class="chips" role="group" aria-label="Chọn chương để xem sơ đồ" id="mt"></div>
+    <h2>Tóm tắt kiến thức</h2>
+    <div class="chips" role="group" aria-label="Chọn chương để xem tóm tắt kiến thức" id="mt"></div>
     <div class="root" id="root" style="margin-top:12px"></div>
-    <div class="tree" id="map"></div>
+    <div class="seg" id="msg" role="group" aria-label="Mức chi tiết">
+      <button type="button" data-m="core" aria-pressed="true">⭐ Cốt lõi</button>
+      <button type="button" data-m="all" aria-pressed="false">📖 Đầy đủ</button>
+      <button type="button" data-m="warn" aria-pressed="false">⚠️ Dễ nhầm</button>
+    </div>
+    <p class="note" id="mnote" style="margin:0 0 10px"></p>
+    <div class="btabs" id="bt" role="group" aria-label="Chọn phần kiến thức"></div>
+    <div class="kgrid" id="map" aria-live="polite"></div>
   </div>
   <div class="panel">
     <h2>Chọn nội dung luyện tập</h2>
@@ -201,127 +226,198 @@ table{width:100%;border-collapse:collapse;margin-top:12px}th,td{text-align:left;
 var R=String.raw;
 var CH=[{id:1,name:"Chương I",full:"Mệnh đề và tập hợp",on:true},{id:2,name:"Chương II",full:"Bất phương trình và hệ bất phương trình bậc nhất hai ẩn",on:true},{id:3,name:"Chương III",full:"Hệ thức lượng trong tam giác",on:true},{id:4,name:"Chương IV",full:"Vectơ",on:true},{id:5,name:"Chương V",full:"Các số đặc trưng của mẫu số liệu không ghép nhóm",on:true}];
 var LV={1:"Nhận biết",2:"Thông hiểu",3:"Vận dụng"};
+var TG={dn:"Định nghĩa",ct:"Công thức",lt:"Lưu ý",vd:"Ví dụ",kl:"Cách làm",sl:"Dễ nhầm"};
+function tD(t){return["dn",t]}function tC(t){return["ct",t]}function tL(t){return["lt",t]}function tV(t){return["vd",t]}function tK(t){return["kl",t]}function tS(t){return["sl",t]}
 var MAPS={
 1:[
 ["1. Mệnh đề",[
- R`Mệnh đề: khẳng định chỉ có thể đúng hoặc sai (không thể vừa đúng vừa sai). Câu hỏi, câu cảm thán, câu mệnh lệnh không phải mệnh đề`,
- R`Mệnh đề chứa biến: chưa biết đúng hay sai; gán giá trị cho biến thì thành mệnh đề`,
- R`Phủ định $\overline{P}$: $P$ đúng thì $\overline{P}$ sai và ngược lại. Ví dụ: phủ định của $a\ge b$ là $a<b$`,
- R`Kéo theo $P\Rightarrow Q$ (nếu $P$ thì $Q$): chỉ sai khi $P$ đúng và $Q$ sai`,
- R`Mệnh đề đảo của $P\Rightarrow Q$ là $Q\Rightarrow P$ (đảo của mệnh đề đúng chưa chắc đúng)`,
- R`Tương đương $P\Leftrightarrow Q$: đúng khi $P,Q$ cùng đúng hoặc cùng sai; đọc “khi và chỉ khi”, “điều kiện cần và đủ”`,
- R`$P\Rightarrow Q$ đúng thì $P$ là điều kiện đủ để có $Q$, $Q$ là điều kiện cần để có $P$`,
- R`$\forall x$: với mọi $x$; $\exists x$: tồn tại $x$`,
- R`Phủ định: $\overline{\forall x,\,P(x)}$ là $\exists x,\,\overline{P(x)}$; $\overline{\exists x,\,P(x)}$ là $\forall x,\,\overline{P(x)}$`]],
+ tD(R`Mệnh đề là câu khẳng định có tính đúng hoặc sai, không thể vừa đúng vừa sai. Câu hỏi, câu cảm thán, câu mệnh lệnh không phải mệnh đề.`),
+ tV(R`“$2+3=5$” là mệnh đề đúng; “$\sqrt2$ là số hữu tỉ” là mệnh đề sai; “Hôm nay trời đẹp quá!” không là mệnh đề.`),
+ tD(R`Mệnh đề chứa biến là câu chứa biến, chưa biết đúng hay sai; gán giá trị cho biến thì trở thành mệnh đề.`),
+ tD(R`Phủ định của mệnh đề $P$ là $\overline{P}$: $P$ đúng thì $\overline{P}$ sai và ngược lại.`),
+ tV(R`Phủ định của $a\ge b$ là $a<b$; của $x=3$ là $x\ne3$.`),
+ tD(R`Kéo theo $P\Rightarrow Q$ (nếu $P$ thì $Q$): $P$ là giả thiết, $Q$ là kết luận.`),
+ tL(R`$P\Rightarrow Q$ chỉ sai khi $P$ đúng và $Q$ sai. Khi $P$ sai thì $P\Rightarrow Q$ luôn đúng.`),
+ tD(R`Mệnh đề đảo của $P\Rightarrow Q$ là $Q\Rightarrow P$. Mệnh đề đảo của một mệnh đề đúng chưa chắc đúng.`),
+ tD(R`Tương đương $P\Leftrightarrow Q$: cả $P\Rightarrow Q$ và $Q\Rightarrow P$ đều đúng. Đọc “$P$ khi và chỉ khi $Q$” hoặc “$P$ là điều kiện cần và đủ để có $Q$”.`),
+ tL(R`Nếu $P\Rightarrow Q$ đúng thì $P$ là điều kiện đủ để có $Q$, còn $Q$ là điều kiện cần để có $P$. Ví dụ: là hình vuông thì là hình chữ nhật.`),
+ tD(R`Kí hiệu $\forall$ đọc là “với mọi”, $\exists$ đọc là “tồn tại” (có ít nhất một). Ví dụ: “$\forall x\in\mathbb{R},\ x^2\ge0$”.`),
+ tC(R`$\overline{\forall x\in X,\ P(x)}$ là “$\exists x\in X,\ \overline{P(x)}$”; $\overline{\exists x\in X,\ P(x)}$ là “$\forall x\in X,\ \overline{P(x)}$”.`),
+ tL(R`Để chứng tỏ mệnh đề “$\forall x,\ P(x)$” sai, chỉ cần chỉ ra một phản ví dụ.`)]],
 ["2. Tập hợp",[
- R`$a\in A$: $a$ thuộc $A$; $a\notin A$: $a$ không thuộc $A$`,
- R`Cách cho tập hợp: liệt kê phần tử $\{1;2;3\}$ hoặc nêu tính chất đặc trưng $\{x\mid P(x)\}$`,
- R`Tập con $A\subset B$: mọi phần tử của $A$ đều thuộc $B$. Luôn có $A\subset A$, $\varnothing\subset A$`,
- R`Hai tập bằng nhau: $A=B\iff A\subset B$ và $B\subset A$`,
- R`Tập rỗng $\varnothing$: không có phần tử nào`,
- R`Tập có $n$ phần tử thì có $2^n$ tập con`,
- R`Biểu đồ Ven: dùng hình kín minh họa tập hợp`]],
+ tD(R`$a\in A$: $a$ thuộc $A$; $a\notin A$: $a$ không thuộc $A$.`),
+ tK(R`Cách xác định tập hợp: liệt kê phần tử, ví dụ $\{1;2;3\}$; hoặc nêu tính chất đặc trưng, ví dụ $\{x\in\mathbb{Z}\mid -2\le x<3\}$.`),
+ tD(R`Tập con: $A\subset B$ nếu mọi phần tử của $A$ đều thuộc $B$.`),
+ tL(R`$A\subset A$; $\varnothing\subset A$; nếu $A\subset B$ và $B\subset C$ thì $A\subset C$.`),
+ tD(R`Hai tập bằng nhau: $A=B\iff A\subset B$ và $B\subset A$.`),
+ tD(R`Tập rỗng $\varnothing$ là tập không có phần tử nào.`),
+ tC(R`Tập hợp có $n$ phần tử thì có $2^n$ tập con (kể cả $\varnothing$ và chính nó).`),
+ tV(R`$\{a;b;c\}$ có $2^3=8$ tập con.`),
+ tL(R`Biểu đồ Ven (hình kín) dùng để minh họa quan hệ giữa các tập hợp và đếm số phần tử.`)]],
 ["3. Các tập hợp số",[
- R`$\mathbb{N}^*\subset\mathbb{N}\subset\mathbb{Z}\subset\mathbb{Q}\subset\mathbb{R}$`,
- R`$\mathbb{Q}$: số thập phân hữu hạn hoặc vô hạn tuần hoàn; số vô tỉ là số thập phân vô hạn không tuần hoàn (như $\sqrt{2}$, $\pi$)`,
- R`Khoảng $(a;b)$, đoạn $[a;b]$, nửa khoảng $[a;b)$ và $(a;b]$`,
- R`$(-\infty;a)$, $(a;+\infty)$, $\mathbb{R}=(-\infty;+\infty)$; $\pm\infty$ không phải số nên luôn đi với ngoặc tròn`]],
+ tC(R`$\mathbb{N}^*\subset\mathbb{N}\subset\mathbb{Z}\subset\mathbb{Q}\subset\mathbb{R}$.`),
+ tL(R`$\mathbb{N}=\{0;1;2;\dots\}$ có số $0$; $\mathbb{N}^*=\{1;2;3;\dots\}$ không có số $0$.`),
+ tD(R`Số hữu tỉ $\mathbb{Q}$: số viết được dưới dạng $\dfrac ab$ ($a,b\in\mathbb{Z},\ b\ne0$), tức là số thập phân hữu hạn hoặc vô hạn tuần hoàn. Số vô tỉ là số thập phân vô hạn không tuần hoàn, ví dụ $\sqrt2$, $\pi$.`),
+ tD(R`Khoảng $(a;b)=\{x\mid a<x<b\}$; đoạn $[a;b]=\{x\mid a\le x\le b\}$; nửa khoảng $[a;b)$ và $(a;b]$.`),
+ tD(R`$(a;+\infty)$, $[a;+\infty)$, $(-\infty;b)$, $(-\infty;b]$ và $\mathbb{R}=(-\infty;+\infty)$.`),
+ tL(R`$+\infty$ và $-\infty$ không phải là số thực, nên luôn đi với dấu ngoặc tròn.`),
+ tK(R`Biểu diễn trên trục số: đầu mút được lấy (ngoặc vuông) tô đặc; đầu mút không lấy (ngoặc tròn) để rỗng.`)]],
 ["4. Các phép toán trên tập hợp",[
- R`Giao $A\cap B=\{x\mid x\in A\text{ và }x\in B\}$`,
- R`Hợp $A\cup B=\{x\mid x\in A\text{ hoặc }x\in B\}$`,
- R`Hiệu $A\setminus B=\{x\mid x\in A\text{ và }x\notin B\}$`,
- R`Phần bù: khi $A\subset E$ thì $C_E A=E\setminus A$`,
- R`Luôn có $A\cap B\subset A\subset A\cup B$`,
- R`Với khoảng, đoạn: vẽ trục số rồi lấy phần chung (giao), phần phủ (hợp); chú ý đầu mút có lấy hay không`]]
+ tD(R`Giao $A\cap B=\{x\mid x\in A\text{ và }x\in B\}$.`),
+ tD(R`Hợp $A\cup B=\{x\mid x\in A\text{ hoặc }x\in B\}$.`),
+ tD(R`Hiệu $A\setminus B=\{x\mid x\in A\text{ và }x\notin B\}$.`),
+ tD(R`Phần bù: khi $A\subset E$ thì $C_E A=E\setminus A$.`),
+ tL(R`$A\cap B\subset A\subset A\cup B$ và $A\setminus B\subset A$.`),
+ tC(R`$n(A\cup B)=n(A)+n(B)-n(A\cap B)$.`),
+ tV(R`Lớp có $40$ học sinh, $25$ em thích bóng đá, $20$ em thích bóng rổ, $8$ em không thích môn nào. Số em thích ít nhất một môn là $32$, nên số em thích cả hai là $25+20-32=13$.`),
+ tK(R`Với khoảng, đoạn: vẽ trục số; phần chung của hai tập là giao, phần phủ bởi ít nhất một tập là hợp; kiểm tra kĩ từng đầu mút.`)]],
+["Dễ nhầm cần tránh",[
+ tS(R`Phủ định của “với mọi” là “tồn tại” và phải đổi cả vế sau; đừng chỉ thêm chữ “không” vào đầu câu.`),
+ tS(R`Phủ định của $x>2$ là $x\le2$ (không phải $x<2$).`),
+ tS(R`$P\Rightarrow Q$ đúng không có nghĩa $Q\Rightarrow P$ đúng.`),
+ tS(R`$\{0\}\ne\varnothing$ vì $\{0\}$ có một phần tử; $0\in\mathbb{N}$ nhưng $0\notin\mathbb{N}^*$.`),
+ tS(R`Chú ý đầu mút: $(-1;3]\cap[3;5)=\{3\}$.`),
+ tS(R`Không viết $[a;+\infty]$; luôn viết $[a;+\infty)$.`)]]
 ],
 2:[
 ["1. Bất phương trình bậc nhất hai ẩn",[
- R`Dạng $ax+by\le c$ (hoặc $<,\ge,>$), trong đó $a,b$ không đồng thời bằng $0$`,
- R`Nghiệm: cặp số $(x_0;y_0)$ làm bất đẳng thức đúng`,
- R`Miền nghiệm: một nửa mặt phẳng có bờ là đường thẳng $d:\ ax+by=c$`,
- R`Dấu $\le,\ge$: tính cả bờ (vẽ nét liền); dấu $<,>$: không tính bờ (vẽ nét đứt)`]],
+ tD(R`Có dạng $ax+by\le c$ (hoặc $<,\ \ge,\ >$), trong đó $a,b$ không đồng thời bằng $0$.`),
+ tD(R`Nghiệm của bất phương trình là cặp số $(x_0;y_0)$ làm cho bất đẳng thức đúng.`),
+ tV(R`$(1;1)$ là nghiệm của $2x+y\le3$ vì $2\cdot1+1=3\le3$.`),
+ tD(R`Miền nghiệm là tập hợp các điểm biểu diễn nghiệm; đó là một nửa mặt phẳng có bờ là đường thẳng $d:\ ax+by=c$.`),
+ tL(R`Dấu $\le,\ge$: tính cả bờ (vẽ nét liền). Dấu $<,>$: không tính bờ (vẽ nét đứt).`)]],
 ["2. Biểu diễn miền nghiệm",[
- R`Bước 1: vẽ đường thẳng $d:\ ax+by=c$`,
- R`Bước 2: lấy điểm $M(x_0;y_0)$ không nằm trên $d$ (thường lấy gốc $O$ nếu $c\ne 0$), thay vào bất phương trình`,
- R`Bước 3: nếu đúng thì miền nghiệm là nửa mặt phẳng bờ $d$ chứa $M$; nếu sai thì là nửa mặt phẳng còn lại`]],
+ tK(R`Bước 1: vẽ đường thẳng $d:\ ax+by=c$ (thường qua hai giao điểm với các trục tọa độ).`),
+ tK(R`Bước 2: lấy một điểm $M(x_0;y_0)$ không nằm trên $d$ (thường lấy $O(0;0)$ khi $c\ne0$) và thay vào bất phương trình.`),
+ tK(R`Bước 3: nếu đúng, miền nghiệm là nửa mặt phẳng bờ $d$ chứa $M$; nếu sai, là nửa mặt phẳng còn lại.`),
+ tV(R`Với $x+y>2$: tại $O$ được $0>2$ (sai), nên miền nghiệm là nửa mặt phẳng bờ $x+y=2$ không chứa $O$, không kể bờ.`),
+ tL(R`Nếu $d$ đi qua gốc tọa độ ($c=0$) thì không dùng $O$; hãy chọn điểm khác như $(1;0)$ hoặc $(0;1)$.`)]],
 ["3. Hệ bất phương trình bậc nhất hai ẩn",[
- R`Hệ gồm một số bất phương trình bậc nhất hai ẩn; nghiệm của hệ là nghiệm chung của mọi bất phương trình`,
- R`Miền nghiệm của hệ là giao các miền nghiệm của từng bất phương trình (thường là một đa giác hoặc miền không bị chặn)`,
- R`Cách làm: biểu diễn từng bất phương trình trên cùng một hệ trục, gạch bỏ phần không thuộc miền nghiệm, phần còn lại là miền nghiệm`]],
+ tD(R`Hệ gồm một số bất phương trình bậc nhất hai ẩn; nghiệm của hệ là nghiệm chung của mọi bất phương trình.`),
+ tD(R`Miền nghiệm của hệ là giao các miền nghiệm của từng bất phương trình.`),
+ tK(R`Biểu diễn từng miền nghiệm trên cùng một hệ trục, gạch bỏ phần không thuộc miền nghiệm; phần còn lại là miền nghiệm của hệ.`),
+ tL(R`Miền nghiệm có thể là đa giác (miền bị chặn), miền không bị chặn, hoặc rỗng.`),
+ tV(R`Hệ $x\ge0,\ y\ge0,\ x+y\le4$ có miền nghiệm là tam giác với ba đỉnh $O(0;0)$, $A(4;0)$, $B(0;4)$.`),
+ tK(R`Tìm đỉnh của miền nghiệm: giải hệ gồm hai phương trình của hai đường biên cắt nhau tại đỉnh đó.`)]],
 ["4. Ứng dụng: giá trị lớn nhất, nhỏ nhất",[
- R`Cần tìm GTLN, GTNN của $F=ax+by$ trên miền nghiệm là đa giác`,
- R`$F$ đạt GTLN, GTNN tại một trong các đỉnh của đa giác`,
- R`Cách làm: tìm tọa độ các đỉnh, tính $F$ tại từng đỉnh rồi so sánh`,
- R`Bài toán thực tế: đặt ẩn $x,y$, lập hệ ràng buộc ($x\ge0,\ y\ge0$, giới hạn nguyên liệu, thời gian…), lập hàm lãi/chi phí rồi tối ưu`]]
+ tD(R`Cần tìm giá trị lớn nhất, nhỏ nhất của biểu thức $F(x;y)=ax+by$ trên miền nghiệm là một đa giác.`),
+ tL(R`$F$ đạt giá trị lớn nhất và nhỏ nhất tại một trong các đỉnh của đa giác.`),
+ tK(R`Bước 1: xác định miền nghiệm và tọa độ các đỉnh. Bước 2: tính $F$ tại từng đỉnh. Bước 3: so sánh để chọn giá trị lớn nhất, nhỏ nhất.`),
+ tK(R`Bài toán thực tế: đặt ẩn $x,y$; lập hệ ràng buộc ($x\ge0,\ y\ge0$, giới hạn nguyên liệu, thời gian…); lập hàm mục tiêu (lãi, chi phí); rồi áp dụng các bước trên.`),
+ tV(R`Lãi $F=3x+2y$ với $x+y\le10,\ x\le6,\ x,y\ge0$: đỉnh $(6;4)$ cho lãi lớn nhất là $26$.`)]],
+["Dễ nhầm cần tránh",[
+ tS(R`Thử điểm xong phải chọn đúng phía; chú ý dấu $<$ hay $\le$ để vẽ nét đứt hay nét liền.`),
+ tS(R`Điểm nằm trên bờ chỉ thuộc miền nghiệm khi dấu bất đẳng thức có “$=$”.`),
+ tS(R`Nghiệm của hệ phải thỏa mãn mọi bất phương trình của hệ.`),
+ tS(R`Bài toán thực tế: đừng quên điều kiện $x\ge0,\ y\ge0$ và, nếu đề yêu cầu, $x,y$ là số nguyên.`)]]
 ],
 3:[
 ["1. Giá trị lượng giác của góc từ $0^\circ$ đến $180^\circ$",[
- R`Trên nửa đường tròn đơn vị, điểm $M(x_0;y_0)$ ứng với góc $\alpha$: $\sin\alpha=y_0$, $\cos\alpha=x_0$`,
- R`$\tan\alpha=\dfrac{y_0}{x_0}$ (với $\alpha\ne 90^\circ$), $\cot\alpha=\dfrac{x_0}{y_0}$ (với $\alpha\ne 0^\circ,180^\circ$)`,
- R`Hai góc bù nhau: $\sin(180^\circ-\alpha)=\sin\alpha$; $\cos$, $\tan$, $\cot$ đổi dấu`,
- R`Góc tù: $\cos\alpha<0$, $\tan\alpha<0$; $\sin\alpha\ge 0$ với mọi $\alpha\in[0^\circ;180^\circ]$`,
- R`$\sin^2\alpha+\cos^2\alpha=1$`,
- R`Giá trị đặc biệt: $\sin 30^\circ=\dfrac12$, $\sin 45^\circ=\dfrac{\sqrt2}{2}$, $\sin 60^\circ=\dfrac{\sqrt3}{2}$, $\cos$ tương ứng đảo thứ tự`]],
+ tD(R`Trên nửa đường tròn đơn vị, điểm $M(x_0;y_0)$ ứng với góc $\alpha=\widehat{xOM}$ có $\sin\alpha=y_0$ và $\cos\alpha=x_0$.`),
+ tC(R`$\tan\alpha=\dfrac{\sin\alpha}{\cos\alpha}$ (với $\alpha\ne90^\circ$); $\cot\alpha=\dfrac{\cos\alpha}{\sin\alpha}$ (với $\alpha\ne0^\circ,\ 180^\circ$).`),
+ tC(R`Hai góc bù nhau: $\sin(180^\circ-\alpha)=\sin\alpha$; $\cos(180^\circ-\alpha)=-\cos\alpha$; $\tan(180^\circ-\alpha)=-\tan\alpha$; $\cot(180^\circ-\alpha)=-\cot\alpha$.`),
+ tC(R`$\sin^2\alpha+\cos^2\alpha=1$.`),
+ tL(R`Góc nhọn: mọi giá trị lượng giác đều dương. Góc tù: $\sin\alpha>0$ còn $\cos\alpha,\ \tan\alpha,\ \cot\alpha<0$.`),
+ tC(R`$0^\circ$: $\sin=0,\ \cos=1$. $30^\circ$: $\sin=\dfrac12,\ \cos=\dfrac{\sqrt3}{2},\ \tan=\dfrac{\sqrt3}{3}$.`),
+ tC(R`$45^\circ$: $\sin=\cos=\dfrac{\sqrt2}{2},\ \tan=1$. $60^\circ$: $\sin=\dfrac{\sqrt3}{2},\ \cos=\dfrac12,\ \tan=\sqrt3$.`),
+ tC(R`$90^\circ$: $\sin=1,\ \cos=0$ ($\tan$ không xác định). $180^\circ$: $\sin=0,\ \cos=-1$.`),
+ tK(R`Góc lớn hơn $90^\circ$: đưa về góc bù (ví dụ $\sin150^\circ=\sin30^\circ$, $\cos150^\circ=-\cos30^\circ$).`)]],
 ["2. Định lí côsin",[
- R`$a^2=b^2+c^2-2bc\cos A$ (và hai công thức tương tự cho $b^2$, $c^2$)`,
- R`Hệ quả: $\cos A=\dfrac{b^2+c^2-a^2}{2bc}$`,
- R`Dùng khi biết hai cạnh và góc xen giữa, hoặc biết ba cạnh`,
- R`$A=90^\circ$ thì trở về định lí Pythagore. Dấu của $\cos A$ cho biết $A$ nhọn, vuông hay tù`]],
+ tC(R`$a^2=b^2+c^2-2bc\cos A$; tương tự $b^2=a^2+c^2-2ac\cos B$ và $c^2=a^2+b^2-2ab\cos C$.`),
+ tC(R`Hệ quả: $\cos A=\dfrac{b^2+c^2-a^2}{2bc}$ (tương tự cho $\cos B,\ \cos C$).`),
+ tK(R`Dùng khi biết hai cạnh và góc xen giữa (tìm cạnh còn lại), hoặc biết ba cạnh (tìm góc).`),
+ tL(R`Khi $A=90^\circ$ định lí trở thành định lí Pythagore. $\cos A>0$: $A$ nhọn; $\cos A=0$: $A$ vuông; $\cos A<0$: $A$ tù.`),
+ tV(R`$AB=3,\ AC=4,\ \widehat{A}=60^\circ$ thì $BC^2=9+16-2\cdot3\cdot4\cdot\dfrac12=13$.`)]],
 ["3. Định lí sin",[
- R`$\dfrac{a}{\sin A}=\dfrac{b}{\sin B}=\dfrac{c}{\sin C}=2R$ ($R$ là bán kính đường tròn ngoại tiếp)`,
- R`Dùng khi biết một cạnh và hai góc, hoặc hai cạnh và góc đối của một cạnh đó`,
- R`Cạnh lớn hơn thì đối diện góc lớn hơn`]],
+ tC(R`$\dfrac{a}{\sin A}=\dfrac{b}{\sin B}=\dfrac{c}{\sin C}=2R$ ($R$ là bán kính đường tròn ngoại tiếp).`),
+ tC(R`$R=\dfrac{a}{2\sin A}$.`),
+ tK(R`Dùng khi biết một cạnh và hai góc, hoặc biết hai cạnh và góc đối của một trong hai cạnh đó.`),
+ tL(R`Trong tam giác: $A+B+C=180^\circ$; cạnh lớn hơn thì đối diện với góc lớn hơn.`)]],
 ["4. Công thức tính diện tích",[
- R`$S=\dfrac12 ab\sin C=\dfrac12 bc\sin A=\dfrac12 ca\sin B$`,
- R`$S=\dfrac{abc}{4R}$ và $S=pr$ ($r$: bán kính đường tròn nội tiếp)`,
- R`Công thức Heron: $S=\sqrt{p(p-a)(p-b)(p-c)}$ với $p=\dfrac{a+b+c}{2}$`]],
+ tC(R`$S=\dfrac12ab\sin C=\dfrac12bc\sin A=\dfrac12ca\sin B$.`),
+ tC(R`$S=\dfrac{abc}{4R}$ và $S=pr$ với $p=\dfrac{a+b+c}{2}$ ($r$ là bán kính đường tròn nội tiếp).`),
+ tC(R`Công thức Heron: $S=\sqrt{p(p-a)(p-b)(p-c)}$.`),
+ tC(R`Đường cao ứng với cạnh $a$: $h_a=\dfrac{2S}{a}$.`),
+ tV(R`Tam giác có ba cạnh $13;\ 14;\ 15$: $p=21$, $S=84$, $r=\dfrac{84}{21}=4$.`)]],
 ["5. Giải tam giác và ứng dụng",[
- R`Giải tam giác: tìm các cạnh, góc còn lại khi biết một số yếu tố`,
- R`Nhớ: $A+B+C=180^\circ$`,
- R`Chọn định lí theo dữ kiện: hai cạnh + góc xen giữa hoặc ba cạnh dùng côsin; có cặp cạnh–góc đối dùng sin`,
- R`Ứng dụng: đo khoảng cách, chiều cao khi không đo trực tiếp được`]]
+ tD(R`Giải tam giác là tìm các cạnh và góc chưa biết khi đã biết một số yếu tố của tam giác.`),
+ tK(R`Chọn công cụ: biết hai cạnh và góc xen giữa hoặc biết ba cạnh thì dùng định lí côsin; có một cặp cạnh – góc đối thì dùng định lí sin.`),
+ tK(R`Đo khoảng cách hoặc chiều cao tới vật không tới được: chọn hai điểm quan sát $A,B$, đo $AB$ và các góc, rồi dùng định lí sin hoặc côsin.`)]],
+["Dễ nhầm cần tránh",[
+ tS(R`Hai góc bù nhau có $\sin$ bằng nhau nhưng $\cos$ đối nhau.`),
+ tS(R`Công thức Heron dùng nửa chu vi $p$, không phải chu vi.`),
+ tS(R`Khi biết $\sin\alpha=\dfrac12$ có hai góc là $30^\circ$ và $150^\circ$; cần thêm điều kiện (góc nhọn hay tù) hoặc dùng $\cos$ để chọn.`),
+ tS(R`Định lí sin cần ghép đúng cạnh với góc đối diện ($a$ với $A$, $b$ với $B$, $c$ với $C$).`)]]
 ],
 4:[
 ["1. Khái niệm vectơ",[
- R`Vectơ là đoạn thẳng có hướng: $\overrightarrow{AB}$ có điểm đầu $A$, điểm cuối $B$; độ dài $|\overrightarrow{AB}|=AB$`,
- R`Cùng phương: giá song song hoặc trùng nhau; cùng hướng hoặc ngược hướng`,
- R`Hai vectơ bằng nhau: cùng hướng và cùng độ dài. Vectơ-không $\vec 0$: cùng phương, cùng hướng với mọi vectơ`]],
+ tD(R`Vectơ là đoạn thẳng có hướng. $\overrightarrow{AB}$ có điểm đầu $A$, điểm cuối $B$; có thể kí hiệu $\vec a$.`),
+ tD(R`Độ dài vectơ: $|\overrightarrow{AB}|=AB$. Vectơ đơn vị có độ dài bằng $1$.`),
+ tD(R`Giá của vectơ là đường thẳng đi qua điểm đầu và điểm cuối. Hai vectơ cùng phương nếu giá của chúng song song hoặc trùng nhau; cùng phương thì cùng hướng hoặc ngược hướng.`),
+ tD(R`Hai vectơ bằng nhau: cùng hướng và cùng độ dài.`),
+ tD(R`Vectơ-không $\vec0$: điểm đầu trùng điểm cuối, độ dài bằng $0$, cùng phương và cùng hướng với mọi vectơ.`),
+ tL(R`$ABCD$ là hình bình hành $\iff\overrightarrow{AB}=\overrightarrow{DC}$.`)]],
 ["2. Tổng và hiệu của hai vectơ",[
- R`Quy tắc ba điểm: $\overrightarrow{AB}+\overrightarrow{BC}=\overrightarrow{AC}$`,
- R`Quy tắc hình bình hành: $ABCD$ là hình bình hành thì $\overrightarrow{AB}+\overrightarrow{AD}=\overrightarrow{AC}$`,
- R`Hiệu: $\overrightarrow{OA}-\overrightarrow{OB}=\overrightarrow{BA}$; vectơ đối của $\vec a$ là $-\vec a$`,
- R`$I$ là trung điểm $AB$: $\overrightarrow{IA}+\overrightarrow{IB}=\vec 0$; $G$ là trọng tâm tam giác $ABC$: $\overrightarrow{GA}+\overrightarrow{GB}+\overrightarrow{GC}=\vec 0$`]],
+ tC(R`Quy tắc ba điểm: $\overrightarrow{AB}+\overrightarrow{BC}=\overrightarrow{AC}$.`),
+ tC(R`Quy tắc hình bình hành: $ABCD$ là hình bình hành thì $\overrightarrow{AB}+\overrightarrow{AD}=\overrightarrow{AC}$.`),
+ tD(R`Vectơ đối của $\vec a$ là $-\vec a$; $\vec a+(-\vec a)=\vec0$; $\overrightarrow{BA}=-\overrightarrow{AB}$.`),
+ tC(R`Hiệu: $\vec a-\vec b=\vec a+(-\vec b)$; $\overrightarrow{OA}-\overrightarrow{OB}=\overrightarrow{BA}$.`),
+ tC(R`$I$ là trung điểm $AB$: $\overrightarrow{IA}+\overrightarrow{IB}=\vec0$. $G$ là trọng tâm tam giác $ABC$: $\overrightarrow{GA}+\overrightarrow{GB}+\overrightarrow{GC}=\vec0$.`),
+ tL(R`Phép cộng vectơ có tính chất giao hoán, kết hợp và $\vec a+\vec0=\vec a$.`)]],
 ["3. Tích của vectơ với một số",[
- R`$k\vec a$ cùng hướng $\vec a$ nếu $k>0$, ngược hướng nếu $k<0$; độ dài $|k|\cdot|\vec a|$`,
- R`$\vec a,\vec b$ ($\vec b\ne\vec 0$) cùng phương $\iff\vec a=k\vec b$; $A,B,C$ thẳng hàng $\iff\overrightarrow{AB}=k\overrightarrow{AC}$`,
- R`$I$ là trung điểm $AB$: $\overrightarrow{MA}+\overrightarrow{MB}=2\overrightarrow{MI}$; $G$ là trọng tâm: $\overrightarrow{MA}+\overrightarrow{MB}+\overrightarrow{MC}=3\overrightarrow{MG}$`]],
+ tD(R`$k\vec a$ cùng hướng với $\vec a$ nếu $k>0$, ngược hướng nếu $k<0$; độ dài $|k\vec a|=|k|\cdot|\vec a|$.`),
+ tC(R`$k(\vec a+\vec b)=k\vec a+k\vec b$; $(k+l)\vec a=k\vec a+l\vec a$; $k(l\vec a)=(kl)\vec a$.`),
+ tC(R`$I$ là trung điểm $AB$: $\overrightarrow{MA}+\overrightarrow{MB}=2\overrightarrow{MI}$. $G$ là trọng tâm tam giác $ABC$: $\overrightarrow{MA}+\overrightarrow{MB}+\overrightarrow{MC}=3\overrightarrow{MG}$ (với mọi điểm $M$).`),
+ tC(R`$\vec a,\vec b$ ($\vec b\ne\vec0$) cùng phương $\iff\vec a=k\vec b$ với một số $k$. Ba điểm $A,B,C$ thẳng hàng $\iff\overrightarrow{AB}=k\overrightarrow{AC}$.`),
+ tL(R`Với hai vectơ $\vec a,\vec b$ không cùng phương, mọi vectơ $\vec x$ đều biểu diễn được duy nhất dưới dạng $\vec x=m\vec a+n\vec b$.`)]],
 ["4. Vectơ trong mặt phẳng tọa độ",[
- R`$\vec a=(x;y)$; $\overrightarrow{AB}=(x_B-x_A;\ y_B-y_A)$; $|\vec a|=\sqrt{x^2+y^2}$`,
- R`$\vec a\pm\vec b=(x\pm x';\ y\pm y')$; $k\vec a=(kx;ky)$`,
- R`Trung điểm $I$ của $AB$: $\left(\dfrac{x_A+x_B}{2};\dfrac{y_A+y_B}{2}\right)$; trọng tâm $G$: lấy trung bình cộng ba tọa độ`,
- R`$\vec a,\vec b$ cùng phương $\iff xy'-x'y=0$ (khi $\vec b\ne\vec 0$)`]],
+ tD(R`$\vec a=(x;y)\iff\vec a=x\vec i+y\vec j$. Với điểm $A(x_A;y_A)$ thì $\overrightarrow{OA}=(x_A;y_A)$.`),
+ tC(R`$\overrightarrow{AB}=(x_B-x_A;\ y_B-y_A)$; $|\vec a|=\sqrt{x^2+y^2}$; $AB=\sqrt{(x_B-x_A)^2+(y_B-y_A)^2}$.`),
+ tC(R`$\vec a\pm\vec b=(x\pm x';\ y\pm y')$; $k\vec a=(kx;\ ky)$; $\vec a=\vec b\iff x=x'$ và $y=y'$.`),
+ tC(R`Trung điểm $I$ của $AB$: $\left(\dfrac{x_A+x_B}{2};\dfrac{y_A+y_B}{2}\right)$. Trọng tâm $G$ của tam giác $ABC$: $\left(\dfrac{x_A+x_B+x_C}{3};\dfrac{y_A+y_B+y_C}{3}\right)$.`),
+ tC(R`$\vec a=(x;y)$ và $\vec b=(x';y')\ne\vec0$ cùng phương $\iff xy'-x'y=0$.`),
+ tV(R`$ABCD$ là hình bình hành $\iff\overrightarrow{AD}=\overrightarrow{BC}$; từ đó tìm được tọa độ $D$.`)]],
 ["5. Tích vô hướng của hai vectơ",[
- R`$\vec a\cdot\vec b=|\vec a||\vec b|\cos(\vec a,\vec b)$; $\vec a^2=|\vec a|^2$`,
- R`Tọa độ: $\vec a\cdot\vec b=xx'+yy'$`,
- R`$\vec a\perp\vec b\iff\vec a\cdot\vec b=0$`,
- R`Góc giữa hai vectơ: $\cos(\vec a,\vec b)=\dfrac{\vec a\cdot\vec b}{|\vec a||\vec b|}$`]]
+ tC(R`$\vec a\cdot\vec b=|\vec a|\,|\vec b|\cos(\vec a,\vec b)$ và $\vec a^2=|\vec a|^2$.`),
+ tC(R`Biểu thức tọa độ: $\vec a\cdot\vec b=xx'+yy'$.`),
+ tC(R`$\vec a\perp\vec b\iff\vec a\cdot\vec b=0$ (với hai vectơ khác $\vec0$).`),
+ tC(R`$\cos(\vec a,\vec b)=\dfrac{\vec a\cdot\vec b}{|\vec a||\vec b|}=\dfrac{xx'+yy'}{\sqrt{x^2+y^2}\,\sqrt{x'^2+y'^2}}$.`),
+ tL(R`Tích vô hướng âm $\iff$ góc giữa hai vectơ là góc tù; dương $\iff$ góc nhọn.`),
+ tC(R`Tính chất: $\vec a\cdot\vec b=\vec b\cdot\vec a$; $\vec a\cdot(\vec b+\vec c)=\vec a\cdot\vec b+\vec a\cdot\vec c$.`)]],
+["Dễ nhầm cần tránh",[
+ tS(R`$\overrightarrow{AB}-\overrightarrow{AC}=\overrightarrow{CB}$ (không phải $\overrightarrow{BC}$).`),
+ tS(R`Tọa độ của $\overrightarrow{AB}$ là tọa độ điểm cuối trừ tọa độ điểm đầu.`),
+ tS(R`Tích vô hướng của hai vectơ là một số, không phải một vectơ.`),
+ tS(R`Hai vectơ cùng phương chưa chắc bằng nhau.`),
+ tS(R`Góc giữa hai vectơ phải xét khi chúng cùng gốc: $(\overrightarrow{AB},\overrightarrow{BC})$ bù với góc $\widehat{ABC}$.`)]]
 ],
 5:[
 ["1. Số gần đúng và sai số",[
- R`$a$ là số gần đúng của số đúng $\bar a$: sai số tuyệt đối $\Delta_a=|a-\bar a|$`,
- R`Độ chính xác $d$: $\Delta_a\le d$, viết $\bar a=a\pm d$`,
- R`Sai số tương đối $\delta_a=\dfrac{\Delta_a}{|a|}$ (thường viết dưới dạng phần trăm); càng nhỏ thì phép đo càng chính xác`,
- R`Quy tròn: nhìn chữ số ngay sau hàng quy tròn; từ $5$ trở lên thì tăng thêm $1$, nhỏ hơn $5$ thì bỏ`]],
-["2. Các số đặc trưng đo xu thế trung tâm",[
- R`Số trung bình $\bar x=\dfrac{x_1+x_2+\dots+x_n}{n}$`,
- R`Trung vị $M_e$: sắp xếp tăng dần; $n$ lẻ lấy số ở giữa, $n$ chẵn lấy trung bình cộng hai số ở giữa`,
- R`Mốt $M_o$: giá trị xuất hiện nhiều nhất (có thể có nhiều mốt)`,
- R`Tứ phân vị: $Q_2=M_e$; $Q_1$ là trung vị nửa số liệu bên dưới $Q_2$, $Q_3$ là trung vị nửa bên trên (khi $n$ lẻ không tính $Q_2$ vào hai nửa)`]],
-["3. Các số đặc trưng đo độ phân tán",[
- R`Khoảng biến thiên $R=x_{\max}-x_{\min}$; khoảng tứ phân vị $\Delta_Q=Q_3-Q_1$`,
- R`Phương sai $s^2=\dfrac{1}{n}\sum(x_i-\bar x)^2$; độ lệch chuẩn $s=\sqrt{s^2}$`,
- R`Các giá trị này càng lớn thì số liệu càng phân tán`,
- R`Giá trị ngoại lệ: $x<Q_1-1{,}5\Delta_Q$ hoặc $x>Q_3+1{,}5\Delta_Q$`]]
+ tD(R`Nếu $a$ là số gần đúng của số đúng $\bar a$ thì sai số tuyệt đối là $\Delta_a=|a-\bar a|$.`),
+ tD(R`Độ chính xác $d$: $\Delta_a\le d$; khi đó viết $\bar a=a\pm d$.`),
+ tD(R`Sai số tương đối $\delta_a=\dfrac{\Delta_a}{|a|}$ (thường viết theo phần trăm); đánh giá $\delta_a\le\dfrac{d}{|a|}$.`),
+ tL(R`Sai số tương đối càng nhỏ thì phép đo càng chính xác.`),
+ tK(R`Quy tròn: xem chữ số ngay bên phải hàng quy tròn; nếu $\ge5$ thì tăng chữ số hàng quy tròn thêm $1$, nếu $<5$ thì giữ nguyên.`),
+ tV(R`$\bar a=12{,}3\pm0{,}05$ (cm) nghĩa là chiều dài đúng nằm trong đoạn $[12{,}25;\ 12{,}35]$.`)]],
+["2. Số đặc trưng đo xu thế trung tâm",[
+ tC(R`Số trung bình: $\bar x=\dfrac{x_1+x_2+\dots+x_n}{n}$.`),
+ tK(R`Trung vị $M_e$: sắp xếp mẫu theo thứ tự tăng dần; $n$ lẻ thì lấy số ở giữa, $n$ chẵn thì lấy trung bình cộng của hai số ở giữa.`),
+ tD(R`Mốt $M_o$: giá trị xuất hiện nhiều nhất; có thể có nhiều mốt.`),
+ tK(R`Tứ phân vị: $Q_2=M_e$; $Q_1$ là trung vị của nửa số liệu bên dưới $Q_2$; $Q_3$ là trung vị của nửa bên trên. Khi $n$ lẻ, không tính $Q_2$ vào hai nửa.`),
+ tL(R`Số trung bình bị ảnh hưởng nhiều bởi giá trị quá lớn hoặc quá nhỏ; trung vị ít bị ảnh hưởng.`),
+ tV(R`Mẫu $2;4;4;6;9;11$: $\bar x=6$, $M_e=5$, $M_o=4$, $Q_1=4$, $Q_3=9$.`)]],
+["3. Số đặc trưng đo độ phân tán",[
+ tC(R`Khoảng biến thiên $R=x_{\max}-x_{\min}$; khoảng tứ phân vị $\Delta_Q=Q_3-Q_1$.`),
+ tC(R`Phương sai $s^2=\dfrac1n\sum_{i=1}^{n}(x_i-\bar x)^2$; độ lệch chuẩn $s=\sqrt{s^2}$.`),
+ tL(R`Các số đặc trưng này càng lớn thì mẫu càng phân tán. $s^2=0$ khi và chỉ khi mọi giá trị đều bằng nhau.`),
+ tC(R`Giá trị ngoại lệ: $x<Q_1-1{,}5\Delta_Q$ hoặc $x>Q_3+1{,}5\Delta_Q$.`),
+ tV(R`Mẫu $1;3;5;7;9$: $\bar x=5$, $s^2=\dfrac{16+4+0+4+16}{5}=8$, $s=2\sqrt2$.`)]],
+["Dễ nhầm cần tránh",[
+ tS(R`Phải sắp xếp mẫu theo thứ tự tăng dần trước khi tìm trung vị và tứ phân vị.`),
+ tS(R`Khi $n$ chẵn, trung vị là trung bình cộng của hai số ở giữa, không phải một trong hai số đó.`),
+ tS(R`Phương sai là trung bình của bình phương độ lệch; độ lệch chuẩn là căn bậc hai của phương sai.`),
+ tS(R`Sai số tuyệt đối có đơn vị của đại lượng đo; sai số tương đối là tỉ số, không có đơn vị.`),
+ tS(R`Giá trị ngoại lệ được xác định bằng ngưỡng $1{,}5\Delta_Q$, không phải cứ lớn nhất là ngoại lệ.`)]]
 ]
 };
 var DATA=[
@@ -668,7 +764,22 @@ function shuf(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math
 function show(id){["home","quiz","res","join","wait","teach"].forEach(function(x){$("#"+x).hidden=x!==id});$("#nav").hidden=["home","join","teach"].indexOf(id)<0;Array.prototype.forEach.call(document.querySelectorAll("#nav button"),function(b){b.setAttribute("aria-pressed",String(b.dataset.v===id))});clearInterval(S.poll);window.scrollTo(0,0)}
 
 /* sơ đồ tư duy */
-function drawMap(id){var c=CH.filter(function(x){return x.id===id})[0];$("#root").textContent=c.name+". "+c.full;$("#map").innerHTML=MAPS[id].map(function(b,i){return "<details"+(i===0?" open":"")+"><summary>"+M(b[0])+"</summary><ul>"+b[1].map(function(l){return "<li>"+M(l)+"</li>"}).join("")+"</ul></details>"}).join("")}
+var MD="core",BR=0,CUR=1,CORE={dn:1,ct:1,kl:1};
+function isW(b){return b[0].indexOf("Dễ nhầm")===0}
+function vis(b){return b[1].filter(function(l){return MD==="all"||(MD==="core"&&CORE[l[0]])||(MD==="warn"&&l[0]==="sl")})}
+function drawMap(id){
+ if(id){CUR=id;BR=0}
+ var c=CH.filter(function(x){return x.id===CUR})[0],L=[];
+ $("#root").textContent=c.name+". "+c.full;
+ MAPS[CUR].forEach(function(b,i){var v=vis(b);if(v.length)L.push({i:i,b:b,v:v})});
+ if(!L.some(function(x){return x.i===BR}))BR=L.length?L[0].i:0;
+ $("#mnote").textContent={core:"Chỉ hiện định nghĩa, công thức và cách làm cần nhớ. Chọn “Đầy đủ” để xem thêm ví dụ và lưu ý.",all:"Hiện đầy đủ định nghĩa, công thức, cách làm, ví dụ và lưu ý.",warn:"Những lỗi hay mắc phải, cần tránh khi làm bài."}[MD];
+ $("#bt").innerHTML=L.map(function(x){var k=isW(x.b)?4:x.i%4;return '<button type="button" class="a'+k+'" data-i="'+x.i+'" aria-pressed="'+(x.i===BR)+'"><i>'+(isW(x.b)?"!":(x.i+1))+"</i><span>"+M(x.b[0].replace(/^\d+\.\s*/,""))+"</span></button>"}).join("");
+ var cur=L.filter(function(x){return x.i===BR})[0];
+ $("#map").innerHTML=cur?cur.v.map(function(l){return '<div class="kc '+l[0]+" a"+(isW(cur.b)?4:cur.i%4)+'"><span class="tg '+l[0]+'">'+TG[l[0]]+"</span>"+M(l[1])+"</div>"}).join(""):"";
+}
+$("#bt").onclick=function(e){var b=e.target.closest("button");if(!b)return;BR=+b.getAttribute("data-i");drawMap()};
+$("#msg").onclick=function(e){var b=e.target.closest("button");if(!b)return;MD=b.getAttribute("data-m");Array.prototype.forEach.call($("#msg").children,function(x){x.setAttribute("aria-pressed",String(x===b))});drawMap()};
 $("#mt").innerHTML=CH.filter(function(c){return c.on}).map(function(c){return '<label class="chip"><input type="radio" name="mp" value="'+c.id+'"'+(c.id===1?" checked":"")+'><span>'+c.name+"</span></label>"}).join("");
 $("#mt").onchange=function(e){drawMap(+e.target.value)};
 drawMap(1);
