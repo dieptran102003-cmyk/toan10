@@ -127,6 +127,8 @@ table{width:100%;border-collapse:collapse;margin-top:12px}th,td{text-align:left;
 .pdq{margin:10px 0;break-inside:avoid}
 .pdopt{margin:2px 0 2px 18px}
 @media print{body>*:not(#prv){display:none!important}body{background:#fff!important}#prv{position:static;overflow:visible;--ink:#000;--bg:#fff;--card:#fff;--line:#999;--mute:#333;color:#000;background:#fff}.noprint{display:none!important}.prvdoc{padding:0;max-width:none}}
+.colt{width:100%;border-collapse:collapse}.colt th,.colt td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:left}
+#sendtxt{font-size:.9rem;font-family:ui-monospace,Menlo,Consolas,monospace}
 [hidden]{display:none!important}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
@@ -193,6 +195,13 @@ table{width:100%;border-collapse:collapse;margin-top:12px}th,td{text-align:left;
     <h2 id="rh" tabindex="-1">Kết quả</h2>
     <b id="sc"></b>
     <p id="ss" class="sub"></p>
+    <div id="sendbox" hidden style="text-align:left;margin-top:12px">
+      <h3 style="margin:0 0 6px">Gửi kết quả cho giáo viên</h3>
+      <p class="note" style="margin:0 0 6px">Bấm “Sao chép”, rồi dán dòng này vào Zalo hoặc lớp học gửi cho thầy/cô. Đừng sửa nội dung dòng này.</p>
+      <textarea class="sa" id="sendtxt" rows="3" readonly aria-label="Dòng kết quả gửi giáo viên"></textarea>
+      <button class="go" type="button" id="sendcp">Sao chép kết quả</button>
+      <p class="note" id="sendmsg" aria-live="polite"></p>
+    </div>
     <button class="go" type="button" id="again">Làm lại với cùng lựa chọn</button>
     <button class="go ghost" type="button" id="home2">Chọn lại nội dung</button>
   </div>
@@ -209,6 +218,18 @@ table{width:100%;border-collapse:collapse;margin-top:12px}th,td{text-align:left;
     <p class="note">Chỉ nhập họ tên, không nhập thông tin cá nhân khác. Giáo viên sẽ nhìn thấy điểm của bạn.</p>
     <p class="err" id="je" role="alert" hidden></p>
     <button class="go" type="button" id="jgo">Vào phòng</button>
+  </div>
+</section>
+
+<section id="lk" hidden>
+  <div class="panel">
+    <h2>Bài kiểm tra</h2>
+    <p class="sub" id="lkinfo"></p>
+    <label class="lab" for="lkn" style="margin-top:0">Họ và tên</label>
+    <input class="sa" id="lkn" maxlength="40" autocomplete="off">
+    <p class="note">Chỉ nhập họ tên, không nhập thông tin cá nhân khác. Làm xong, bạn sẽ nhận một dòng kết quả để gửi cho giáo viên.</p>
+    <p class="err" id="lke" role="alert" hidden></p>
+    <button class="go" type="button" id="lkgo">Bắt đầu làm bài</button>
   </div>
 </section>
 
@@ -255,10 +276,21 @@ table{width:100%;border-collapse:collapse;margin-top:12px}th,td{text-align:left;
   </div>
   <div class="panel" id="tex">
     <h2>Xem lại đề và trình chiếu</h2>
+    <label class="lab" for="tlink" style="margin-top:0">Link làm bài cho học sinh (không cần Google Sheets)</label>
+    <input class="sa" id="tlink" readonly>
+    <button class="go ghost" type="button" id="tlcp" disabled>Sao chép link</button>
+    <p class="note" id="tlm" aria-live="polite">Học sinh mở link, nhập họ tên, làm bài rồi gửi “dòng kết quả” cho thầy/cô qua Zalo hoặc lớp học.</p>
     <p class="note" id="texs">Chưa có đề. Hãy tạo phòng hoặc xem trước đề theo ma trận; hoặc nhập mã phòng ở trên rồi bấm “Mở lại đề của phòng”.</p>
     <button class="go ghost" type="button" id="tload">Mở lại đề của phòng (theo mã phòng ở trên)</button>
     <button class="go" type="button" id="tslide">▶ Trình chiếu từng câu</button>
     <button class="go ghost" type="button" id="tprint">🖨 Xem đề, in hoặc lưu PDF</button>
+  </div>
+  <div class="panel" id="tcol">
+    <h2>Gom kết quả học sinh gửi qua Zalo</h2>
+    <p class="note">Dán các dòng kết quả học sinh gửi (mỗi dòng bắt đầu bằng TOAN10|…). Trang kiểm tra mã từng dòng và xếp hạng. Cách này chỉ ngăn sửa điểm thông thường, không phải chống gian lận tuyệt đối.</p>
+    <textarea class="sa" id="colin" rows="6" aria-label="Các dòng kết quả học sinh gửi"></textarea>
+    <button class="go" type="button" id="colgo">Tổng hợp bảng xếp hạng</button>
+    <div id="colout" hidden></div>
   </div>
   <div class="panel">
     <h2>Theo dõi và công bố</h2>
@@ -920,7 +952,7 @@ function M(s){return s.split("$").map(function(p,i){
   p=BB(p);try{if(window.katex)return katex.renderToString(p,{output:"mathml",throwOnError:false,strict:false})}catch(e){}
   return "<code>"+esc(p)+"</code>"}).join("")}
 function shuf(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a}
-function show(id){["home","quiz","res","join","wait","teach"].forEach(function(x){$("#"+x).hidden=x!==id});$("#nav").hidden=["home","join","teach"].indexOf(id)<0;Array.prototype.forEach.call(document.querySelectorAll("#nav button"),function(b){b.setAttribute("aria-pressed",String(b.dataset.v===id))});clearInterval(S.poll);window.scrollTo(0,0)}
+function show(id){["home","quiz","res","join","wait","teach","lk"].forEach(function(x){$("#"+x).hidden=x!==id});$("#nav").hidden=["home","join","teach"].indexOf(id)<0;Array.prototype.forEach.call(document.querySelectorAll("#nav button"),function(b){b.setAttribute("aria-pressed",String(b.dataset.v===id))});clearInterval(S.poll);window.scrollTo(0,0)}
 
 /* sơ đồ tư duy */
 var MD="core",BR=0,CUR=1,CORE={dn:1,ct:1,kl:1};
@@ -1003,13 +1035,55 @@ function finish(){
   var d=Math.round(tot/n*100)/10;
   $("#sc").textContent=String(d).replace(".",",")+" / 10";
   $("#ss").textContent="Tổng điểm quy về thang 10, "+n+" câu, mỗi câu có trọng số bằng nhau.";
-  $("#rvs").innerHTML=h;S.d=d;if(S.exam){examDone(d)}else{$("#again").hidden=false;show("res");$("#rh").focus()}
+  $("#rvs").innerHTML=h;S.d=d;$("#sendbox").hidden=true;if(S.exam&&S.exam.local){localDone(d)}else if(S.exam){examDone(d)}else{$("#again").hidden=false;show("res");$("#rh").focus()}
 }
 $("#start").onclick=start;
 $("#prev").onclick=function(){S.i--;render();$("#qh").focus()};
 $("#next").onclick=function(){if(S.i===S.qs.length-1)finish();else{S.i++;render();$("#qh").focus()}};
 $("#again").onclick=start;
 $("#home2").onclick=function(){show("home")};
+/* ===== chế độ link (không cần máy chủ) ===== */
+var LK=null;
+function b64e(o){return btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"")}
+function b64d(t){t=t.replace(/-/g,"+").replace(/_/g,"/");while(t.length%4)t+="=";return JSON.parse(decodeURIComponent(escape(atob(t))))}
+function mkLink(){return location.href.split("#")[0].split("?")[0]+"?de="+b64e({i:TEX.qs.map(function(q){return q.id}),m:TEX.min,r:TEX.room})}
+function chkCode(room,name,sc){var t=room+"|"+name.toLowerCase()+"|"+(+sc).toFixed(1)+"|t10",h=5381;for(var i=0;i<t.length;i++)h=((h<<5)+h+t.charCodeAt(i))|0;return (h>>>0).toString(36).toUpperCase().slice(-5)}
+function resLine(room,name,sc){name=name.replace(/\|/g," ").trim();return "TOAN10|"+room+"|"+name+"|"+(+sc).toFixed(1)+"|"+chkCode(room,name,sc)}
+function parseRes(text){var ok=[],bad=[],seen={};
+ text.split(/\r?\n/).forEach(function(l){l=l.trim();if(!l)return;var i=l.indexOf("TOAN10|");if(i<0){bad.push([l,"không có dấu TOAN10|"]);return}
+  var p=l.slice(i).split("|");if(p.length!==5){bad.push([l,"sai định dạng"]);return}
+  var sc=parseFloat(p[3]);if(isNaN(sc)||sc<0||sc>10){bad.push([l,"điểm không hợp lệ"]);return}
+  if(chkCode(p[1],p[2],sc)!==p[4].trim().toUpperCase()){bad.push([l,"mã kiểm tra không khớp (dòng đã bị sửa hoặc chép thiếu)"]);return}
+  var k=p[1]+"|"+p[2].toLowerCase();if(seen[k]){bad.push([l,"trùng tên, giữ bài đầu tiên"]);return}seen[k]=1;
+  ok.push({room:p[1],name:p[2],score:sc})});
+ ok.sort(function(a,b){return b.score-a.score||a.name.localeCompare(b.name,"vi")});return {ok:ok,bad:bad}}
+function copyBox(el,msgEl,okMsg){var done=function(){msgEl.textContent=okMsg},fb=function(){el.focus();el.select();try{document.execCommand("copy");done()}catch(x){msgEl.textContent="Hãy bôi đen nội dung rồi sao chép (Ctrl + C)."}};
+ if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(el.value).then(done,fb);else fb()}
+$("#tlcp").onclick=function(){copyBox($("#tlink"),$("#tlm"),"Đã sao chép link. Hãy gửi cho học sinh qua Zalo hoặc lớp học.")};
+$("#sendcp").onclick=function(){copyBox($("#sendtxt"),$("#sendmsg"),"Đã sao chép. Hãy dán vào Zalo hoặc lớp học gửi cho giáo viên.")};
+function localDone(d){clearInterval(S.tid);$("#tm").textContent="";
+ $("#sendtxt").value=resLine(S.exam.room,S.exam.name,d);$("#sendmsg").textContent="";$("#sendbox").hidden=false;
+ $("#ss").textContent+=" Hãy gửi dòng kết quả bên dưới cho giáo viên.";$("#again").hidden=true;show("res");$("#rh").focus()}
+$("#lkgo").onclick=function(){var nm=$("#lkn").value.trim().replace(/\s+/g," "),e=$("#lke");
+ if(!nm){e.textContent="Hãy nhập họ và tên.";e.hidden=false;return}e.hidden=true;
+ S.exam={room:LK.room,name:nm.replace(/\|/g," "),local:true};S.qs=LK.qs.map(mk);S.i=0;clearInterval(S.tid);$("#tm").textContent="";
+ if(LK.min>0){S.end=Date.now()+LK.min*60000;S.tid=setInterval(tick,1000);tick()}
+ render();show("quiz");$("#qh").focus()};
+$("#colgo").onclick=function(){var r=parseRes($("#colin").value),h="",o=$("#colout");
+ if(!r.ok.length&&!r.bad.length){o.hidden=false;o.innerHTML='<p class="note">Chưa có dòng nào để tổng hợp.</p>';return}
+ var avg=r.ok.length?Math.round(r.ok.reduce(function(a,x){return a+x.score},0)/r.ok.length*100)/100:0,fm=function(x){return String(x).replace(".",",")};
+ h+='<p class="note"><b>Hợp lệ: '+r.ok.length+"</b> · Không hợp lệ: "+r.bad.length+(r.ok.length?" · Điểm trung bình: "+fm(avg):"")+"</p>";
+ if(r.ok.length)h+='<div class="tw"><table class="colt"><thead><tr><th>Hạng</th><th>Họ tên</th><th>Điểm</th><th>Phòng</th></tr></thead><tbody>'+r.ok.map(function(x,i){return "<tr><td>"+(i+1)+"</td><td>"+esc(x.name)+"</td><td><b>"+fm(x.score)+"</b></td><td>"+esc(x.room)+"</td></tr>"}).join("")+"</tbody></table></div>"+
+  '<button class="go ghost" type="button" id="colcp">Sao chép bảng (dán vào Excel)</button><p class="note" id="colm" aria-live="polite"></p><textarea id="coltxt" hidden></textarea>';
+ if(r.bad.length)h+='<p class="note"><b>Các dòng không dùng được:</b></p><ul>'+r.bad.map(function(b){return "<li>"+esc(b[0].slice(0,80))+" → "+esc(b[1])+"</li>"}).join("")+"</ul>";
+ o.innerHTML=h;o.hidden=false;
+ var cp=document.getElementById("colcp");if(cp){document.getElementById("coltxt").value="Hạng\tHọ tên\tĐiểm\tPhòng\n"+r.ok.map(function(x,i){return (i+1)+"\t"+x.name+"\t"+fm(x.score)+"\t"+x.room}).join("\n");cp.onclick=function(){copyBox(document.getElementById("coltxt"),document.getElementById("colm"),"Đã sao chép bảng. Hãy dán vào Excel hoặc Google Trang tính.")}}};
+(function(){var m=/[?&]de=([^&#]+)/.exec(location.search);if(!m)return;
+ try{var o=b64d(m[1]),qs=o.i.map(function(id){return DATA.filter(function(q){return q.id===id})[0]}).filter(Boolean);if(!qs.length||qs.length!==o.i.length)throw 0;
+  LK={qs:qs,min:Math.max(0,Math.min(120,+o.m||0)),room:String(o.r||"").slice(0,30)};
+  $("#lkinfo").textContent=(LK.room?"Phòng "+LK.room+" · ":"")+qs.length+" câu · "+(LK.min?LK.min+" phút":"không giới hạn thời gian")}
+ catch(e){$("#lkinfo").textContent="Link bài kiểm tra không hợp lệ hoặc đã cũ (ngân hàng câu hỏi có thể đã thay đổi). Hãy xin giáo viên link mới.";$("#lkgo").hidden=true;$("#lkn").hidden=true}
+ show("lk")})();
 var fz=100;function setfz(d){fz=Math.max(85,Math.min(150,fz+d));document.documentElement.style.fontSize=fz+"%"}
 $("#fm").onclick=function(){setfz(-10)};$("#fp").onclick=function(){setfz(10)};
 /* ===== Chế độ kiểm tra ===== */
@@ -1085,7 +1159,7 @@ $("#tcreate").onclick=function(){
   call({act:"create",room:a.room,pin:a.pin,cfg:{ids:ids,min:m}}).then(function(o){
     if(!o.ok)return tm(o.msg);
     tm("");$("#tt").hidden=true;
-    setEx(ids,a.room);$("#tst").textContent="Đã tạo phòng "+a.room+" gồm "+ids.length+" câu, "+(m?m+" phút":"không giới hạn thời gian")+". Hãy đưa mã phòng cho học sinh."})};
+    setEx(ids,a.room,m);$("#tst").textContent="Đã tạo phòng "+a.room+" gồm "+ids.length+" câu, "+(m?m+" phút":"không giới hạn thời gian")+". Hãy đưa mã phòng cho học sinh."+(API?"":" Vì chưa nối Google Sheets, hãy gửi cho học sinh LINK ở khung “Xem lại đề và trình chiếu”; học sinh sẽ gửi lại dòng kết quả cho thầy/cô.")})};
 /* ===== tạo đề theo ma trận ===== */
 var TMODE="basic",TMX={ids:[]},TY=["mc","tf","sa"],TYN={mc:"Trắc nghiệm",tf:"Đúng/Sai",sa:"Trả lời ngắn"},ROM=["","I","II","III","IV","V"],TPL="Chương,TN-NB,TN-TH,TN-VD,ĐS-NB,ĐS-TH,ĐS-VD,TLN-NB,TLN-TH,TLN-VD\nI,2,1,0,0,1,0,0,0,1\nII,1,1,0,0,0,1,0,1,0\nIII,1,1,1,1,0,0,0,0,1\nIV,1,1,0,0,1,0,0,1,0\nV,1,0,1,0,0,0,0,1,1\n";
 function avail(c,t,l){return DATA.filter(function(q){return q.c===c&&q.t===t&&q.lv===l}).length}
@@ -1140,7 +1214,7 @@ function createMat(){var a=tauth();
  call({act:"create",room:a.room,pin:a.pin,cfg:{ids:ids,min:m}}).then(function(o){
   if(!o.ok)return tm(o.msg);
   tm("");$("#tt").hidden=true;
-  setEx(ids,a.room);$("#tst").textContent="Đã tạo phòng "+a.room+" gồm "+ids.length+" câu theo ma trận, "+(m?m+" phút":"không giới hạn thời gian")+". Hãy đưa mã phòng cho học sinh."})}
+  setEx(ids,a.room,m);$("#tst").textContent="Đã tạo phòng "+a.room+" gồm "+ids.length+" câu theo ma trận, "+(m?m+" phút":"không giới hạn thời gian")+". Hãy đưa mã phòng cho học sinh."+(API?"":" Vì chưa nối Google Sheets, hãy gửi cho học sinh LINK ở khung “Xem lại đề và trình chiếu”; học sinh sẽ gửi lại dòng kết quả cho thầy/cô.")})}
 $("#tmode").onclick=function(e){var b=e.target.closest("button");if(!b)return;TMODE=b.getAttribute("data-m");
  Array.prototype.forEach.call($("#tmode").children,function(x){x.setAttribute("aria-pressed",String(x===b))});
  $("#tbasic").hidden=TMODE!=="basic";$("#tmat").hidden=TMODE!=="mat";tm("")};
@@ -1166,13 +1240,13 @@ $("#tmtpl").onclick=function(){try{var b=new Blob(["\ufeff"+TPL],{type:"text/csv
 /* ===== xem lại đề, trình chiếu, in ===== */
 var TEX={qs:[],room:""},PS={i:0,show:false},TP=["mc","tf","sa"],TPN=["PHẦN I. Trắc nghiệm nhiều lựa chọn","PHẦN II. Đúng/Sai","PHẦN III. Trả lời ngắn"];
 function chName(c){return CH.filter(function(x){return x.id===c})[0].name}
-function setEx(ids,room){TEX.qs=ids.map(function(id){return DATA.filter(function(q){return q.id===id})[0]}).filter(Boolean);TEX.room=room||"";
+function setEx(ids,room,min){TEX.min=(min===undefined?Math.max(0,Math.min(120,Math.round(+$("#tmin").value)||0)):min);TEX.qs=ids.map(function(id){return DATA.filter(function(q){return q.id===id})[0]}).filter(Boolean);TEX.room=room||"";
  var by={mc:0,tf:0,sa:0};TEX.qs.forEach(function(q){by[q.t]++});
  $("#texs").textContent=TEX.qs.length?"Đề hiện có: "+TEX.qs.length+" câu (Trắc nghiệm "+by.mc+" · Đúng/Sai "+by.tf+" · Trả lời ngắn "+by.sa+")"+(TEX.room?", phòng "+TEX.room+".":", đề xem trước, chưa tạo phòng."):"Chưa có đề.";
- $("#tslide").disabled=!TEX.qs.length;$("#tprint").disabled=!TEX.qs.length}
+ $("#tslide").disabled=!TEX.qs.length;$("#tprint").disabled=!TEX.qs.length;$("#tlink").value=TEX.qs.length?mkLink():"";$("#tlcp").disabled=!TEX.qs.length}
 $("#tslide").disabled=true;$("#tprint").disabled=true;
 $("#tload").onclick=function(){var room=norm($("#tr").value);if(!room)return tm("Hãy nhập mã phòng ở trên.");
- call({act:"cfg",room:room,name:""}).then(function(o){if(!o.ok)return tm(o.msg);tm("");setEx(o.cfg.ids,room);if(!TEX.qs.length)tm("Đề của phòng không còn khớp với ngân hàng câu hỏi hiện tại.")})};
+ call({act:"cfg",room:room,name:""}).then(function(o){if(!o.ok)return tm(o.msg);tm("");setEx(o.cfg.ids,room,o.cfg.min);if(!TEX.qs.length)tm("Đề của phòng không còn khớp với ngân hàng câu hỏi hiện tại.")})};
 /* trình chiếu */
 function pshow(){var q=TEX.qs[PS.i],n=TEX.qs.length,sh=PS.show,h="";
  $("#pcnt").textContent="Câu "+(PS.i+1)+" / "+n;
